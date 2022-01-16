@@ -9,6 +9,10 @@
 
   <name>tictactoe</name>
   <url>http://maven.apache.org</url>
+  
+  <properties>
+		<java.version>1.8</java.version>
+	</properties>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
