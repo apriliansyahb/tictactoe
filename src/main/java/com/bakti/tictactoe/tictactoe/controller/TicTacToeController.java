@@ -8,14 +8,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bakti.tictactoe.tictactoe.model.TIcTacToeGame;
-import com.bakti.tictactoe.tictactoe.service.MainService;
+import com.bakti.tictactoe.tictactoe.service.TicTacToeService;
 
 @RestController
 @RequestMapping("/main")
 public class TicTacToeController {
 
 	@Autowired
-	private MainService mainService;
+	private TicTacToeService mainService;
 
 	@PostMapping(value = "/start")
 	public TIcTacToeGame start(@RequestParam int boardSize) {
