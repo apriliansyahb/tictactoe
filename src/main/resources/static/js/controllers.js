@@ -1,6 +1,6 @@
 var tttControllers = angular.module('tttControllers', []);
 
-function goToDashboard() {
+function goToBoard() {
     window.location = "#!/board";
 }
 
