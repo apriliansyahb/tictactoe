@@ -1,6 +1,6 @@
 package com.bakti.tictactoe.tictactoe.model;
 
-public class TIcTacToe {
+public class TIcTacToeGame {
 
 	private Board board;
 	private int boardSize;
@@ -60,27 +60,32 @@ public class TIcTacToe {
 		player = "X";
 	}
 
-	private void move(int x, int y) {
-		if (board.setCoordValue(x, y, player)) {
+	public String move(int x, int y) {
+		winner = board.move(x, y, player);
+		if (winner == null) {
 			changePlayer();
-
-		}
-	}
-
-	private void checkWinner() {
-		String winner = board.checkWinner();
-		if (winner != null) {
+		}else {
 			concluded = true;
-
-			if (!"draw".equals(winner)) {
-				this.winner = winner;
-			}
 		}
+		
+		return winner;
 	}
 
-	public TIcTacToe(int boardSize) {
+//	private void checkWinner() {
+//		String winner = board.checkWinner();
+//		if (winner != null) {
+//			concluded = true;
+//
+//			if (!"draw".equals(winner)) {
+//				this.winner = winner;
+//			}
+//		}
+//	}
+
+	public TIcTacToeGame(int boardSize) {
 		super();
 		this.boardSize = boardSize;
+		start();
 	}
 
 }

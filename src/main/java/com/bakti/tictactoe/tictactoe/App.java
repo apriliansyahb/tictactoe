@@ -34,7 +34,7 @@ public class App extends SpringServletContainerInitializer {
 	@Bean
 	public Docket api() {
 		Contact contact = new Contact("bakti", "", "");
-		ApiInfo apiInfo = new ApiInfo("TicTacToe bakti", "Technical Test for FWD Singapore", "1.0", "", contact,
+		ApiInfo apiInfo = new ApiInfo("TicTacToe bakti", "Technical Test for FWD Singapore recruitment", "1.0", "", contact,
 				"license", "", new ArrayList<>());
 
 		return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo);

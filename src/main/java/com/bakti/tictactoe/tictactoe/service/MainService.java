@@ -4,17 +4,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.bakti.tictactoe.tictactoe.model.TIcTacToe;
+import com.bakti.tictactoe.tictactoe.model.TIcTacToeGame;
 
 @Service
 public class MainService {
 
 	private final Logger log = LoggerFactory.getLogger(MainService.class);
 
-	private TIcTacToe ttt;
+	private TIcTacToeGame ttt;
 
-	public TIcTacToe start(int boardSize) {
-		return ttt = new TIcTacToe(boardSize);
+	public TIcTacToeGame start(int boardSize) {
+		return ttt = new TIcTacToeGame(boardSize);
+	}
+
+	public TIcTacToeGame move(int x, int y) {
+		ttt.move(x, y);
+		return ttt;
+	}
+
+	public TIcTacToeGame getBoard() {
+		return ttt;
 	}
 
 }
