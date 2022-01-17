@@ -1,0 +1,62 @@
+<md-content class="md-padding general-background" layout="column">
+	<div class="md-padding">
+		<h2 style="color: white; margin-left: 5px; font-weight: 400;">Log Activity</h2>
+
+		<h4 style="color: white; margin-left: 5px; font-weight: 400;">Expected Result File Log</h4>
+
+		<md-card style="padding: 5px 30px 30px 30px;">
+			<md-toolbar class="md-table-toolbar md-default">
+				<div class="md-toolbar-tools" layout="row" flex>
+					<md-input-container md-no-float style="margin: 25px 20px 0 0;" flex>
+						<md-icon>search</md-icon>
+						<input ng-model="search.search" type="text" placeholder="search" my-enter="searchEntity()" style="font-size: 0.8em;" aria-label="search">
+					</md-input-container>
+					<div layout="row" layout-align="center center" style="font-size: 14px; cursor: pointer; outline: 0;" flex="10" id="filter-button" ng-click="showFilterDialog($event)">
+						<span style="color: #2065ac;">Filters</span>
+						<md-icon style="margin: 0 10px;color: #2065ac;">filter_list</md-icon>
+					</div>
+				</div>
+			</md-toolbar>
+
+			<md-table-container>
+				<!-- Table Summary  -->
+				<table md-table class="nobordertop headborderbottom" md-row-select multiple ng-model="search.selected">
+					<thead md-head md-order="filter.inputSortBy" md-on-reorder="">
+					<tr md-row>
+						<th md-column md-order-by="name">CREATED BY</th>
+						<th md-column md-order-by="businessID">ENTITY TEMPLATE NAME</th>
+						<th md-column md-order-by="publicID">ENTITY COUNT</th>
+						<th md-column md-order-by="versionNumber">EXPECTED FILENAME</th>
+						<th md-column md-order-by="workflowStatus">DATE CREATED</th>
+					</tr>
+					</thead>
+					<tbody md-body>
+					<tr ng-hide="(search.data | filter:search.search).length">
+						<td colspan="6" md-row style="padding:24px;text-align:center">
+							No Data Available.
+						</td>
+					</tr>
+					<tr md-row ng-repeat="x in search.data"
+						class="selectable" md-select="x" md-select-id="$index" md-on-select="checkRunButton" md-on-deselect="checkRunButton" md-auto-select>
+						<td md-cell>{{x.createdBy}}</td>
+						<td md-cell>{{x.templateName}}</td>
+						<td md-cell>{{x.entityCount}}</td>
+						<td md-cell>{{x.expectedFilename}}</td>
+						<td md-cell>{{x.date}}</td>
+					</tr>
+					</tbody>
+				</table>
+			</md-table-container>
+			<md-table-pagination md-limit="dataTable.pageSize" md-page="dataTable.pageNumber"
+								 md-limit-options="[5,10,50]" md-on-paginate="searchEntity"
+								 md-total="{{dataTable.totalElements}}" md-page-select>
+			</md-table-pagination>
+
+			<div layout="row">
+				<div flex></div>
+				<md-button class="md-raised" style="color:#2065ac; background-color: white; text-transform: none; font-size: 0.8em;" ng-click="resetInput()">Clear</md-button>
+				<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;" ng-style="{'color': 'white', 'background-color': '#2065ac'}">Download</md-button>
+			</div>
+		</md-card>
+	</div>
+</md-content>

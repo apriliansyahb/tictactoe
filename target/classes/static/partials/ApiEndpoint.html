@@ -1,0 +1,269 @@
+<md-content class="md-padding general-background" layout="column">
+	<div class="md-padding">
+		<h2 style="color: white; margin-left: 10px;">API Endpoint</h2>
+		<md-card md-whiteframe="4">
+
+			<md-toolbar class="md-table-toolbar md-default">
+				<div class="md-toolbar-tools" layout="row" flex>
+					<div layout="row">All Endpoint</div>
+					<md-input-container md-no-float style="margin: 25px 0 0 20px;" flex>
+						<md-icon>search</md-icon>
+						<input ng-model="activity.search" type="text" placeholder="Enter Keyword" aria-label="Search" style="font-size: 0.7em;">
+					</md-input-container>
+					<div layout="row" layout-align="end center" style="font-size: 14px; cursor: pointer; outline: 0;" flex="10" ng-click="">
+						<span style="color: #2065ac;">Filters</span>
+						<md-icon style="margin: 0 10px;color: #2065ac;">filter_list</md-icon>
+					</div>
+					<div layout="row" layout-align="end center" style="font-size: 14px; cursor: pointer; outline: 0;" flex="15" ng-click="showFormNewEndpoint()">
+						<span style="color: #2065ac;">Add New Endpoint</span>
+						<md-icon style="margin: 0 10px;color: #2065ac;">add_circle</md-icon>
+					</div>
+				</div>
+			</md-toolbar>
+
+			<md-table-container style="margin-bottom: 20px;">
+				<table md-table class="nobordertop headborderbottom">
+					<thead md-head>
+						<tr md-row>
+							<th md-column style="width: 100px; text-align: center;">ACTION</th>
+							<th md-column style="width: 100px; text-align: center;">ID</th>
+							<th md-column md-order-by="name">ENDPOINT NAME</th>
+							<th md-column md-order-by="type">ENDPOINT DESCRIPTION</th>
+							<th md-column style="width: 100px; text-align: center;">METHOD</th>
+							<th md-column md-order-by="type">ENDPOINT URL</th>
+							<th md-column md-order-by="header">HEADER</th>
+							<th md-column md-order-by="headerType">HEADER TYPE</th>
+							<th md-column md-order-by="body">BODY</th>
+							<th md-column md-order-by="bodyFormat">BODY FORMAT</th>
+							<th md-column md-order-by="forceJsonResponse">FORCE JSON<br>RESPONSE</th>
+							<th md-column md-order-by="removeElbowBrackets">REMOVE ELBOW<br>BRACKETS</th>
+							<th md-column md-order-by="wrapErrorResponse">WRAP ERROR<br>RESPONSE</th>
+							<th md-column md-order-by="type">API PARAM</th>
+						</tr>
+					</thead>
+					<tbody md-body>
+					<tr ng-hide="apiEndpoints.length">
+						<td colspan="13" md-row style="padding:24px;text-align:center">
+							No Data Available.
+						</td>
+					</tr>
+					<tr md-row ng-if="newEndpoint">
+						<td md-cell>
+							<div layout="row" layout-align="center center" style="font-size: 14px; cursor: pointer; outline: 0;">
+								<md-icon style="margin: 0 10px;color: #2065ac;" ng-click="cancelNew()">close</md-icon>
+								<md-icon style="margin: 0 10px;color: #2065ac;" ng-click="addNewEndpoint($event, item)">save</md-icon>
+							</div>
+						</td>
+						<td md-cell>
+							<div layout="row" layout-align="center center">
+								<span></span>
+							</div>
+						</td>
+						<td md-cell>
+							<md-input-container layout="row" md-no-float style="margin: 0px; padding: 0px;">
+								<input name="endpointName" ng-model="item.endpointName" placeholder="Endpoint Name" aria-label="endpointName"/>
+							</md-input-container>
+						</td>
+						<td md-cell>
+							<md-input-container layout="row" md-no-float style="margin: 0px; padding: 0px;">
+								<input name="endpointDesc" ng-model="item.endpointDesc" placeholder="Endpoint Description" aria-label="endpointDesc"/>
+							</md-input-container>
+						</td>
+						<td md-cell style="padding: 0px;">
+							<div layout="row" layout-align="start center" flex>
+								<md-input-container layout="row" md-no-float layout-align="start center" style="margin: 0px; padding: 0px;">
+									<md-select name="httpMethod" ng-model="item.httpMethod" aria-label="httpMethod">
+										<md-option value="GET" ng-selected="true">GET</md-option>
+										<md-option value="POST">POST</md-option>
+										<md-option value="PUT">PUT</md-option>
+										<md-option value="DELETE">DELETE</md-option>
+									</md-select>
+								</md-input-container>
+							</div>
+						</td>
+						<td md-cell>
+							<md-input-container md-no-float layout="column" style="margin: 0px; padding: 0px;">
+								<textarea name="apiBaseUrl" ng-model="item.apiBaseUrl" rows="2" aria-label="apiBaseUrl" placeholder="Endpoint Url" flex/>
+							</md-input-container>
+						</td>
+						<td md-cell>
+							<md-input-container md-no-float layout="row" style="margin: 0px; padding: 0px;">
+								<input name="header" ng-model="item.header" aria-label="header"/>
+							</md-input-container>
+						</td>
+						<td md-cell>
+							<md-input-container md-no-float layout="row" style="margin: 0px; padding: 0px;">
+								<input name="headerType" ng-model="item.headerType" aria-label="headerType"/>
+							</md-input-container>
+						</td>
+						<td md-cell>
+							<md-input-container md-no-float layout="row" style="margin: 0px; padding: 0px;">
+								<input name="body" ng-model="item.body" aria-label="body"/>
+							</md-input-container>
+						</td>
+						<td md-cell>
+							<md-input-container md-no-float layout="row" style="margin: 0px; padding: 0px;">
+								<input name="bodyFormat" ng-model="item.bodyFormat" aria-label="bodyFormat"/>
+							</md-input-container>
+						</td>
+						<td md-cell>
+							<div layout="row" layout-align="start center" flex>
+								<span>NO</span>
+								<md-switch class="md-primary" style="margin-left: 8px;" name="forceJsonResponse" ng-model="item.forceJsonResponse">
+									YES
+								</md-switch>
+							</div>
+						</td>
+						<td md-cell>
+							<div layout="row" layout-align="start center" flex>
+								<span>NO</span>
+								<md-switch class="md-primary" style="margin-left: 8px;" name="removeElbowBrackets" ng-model="item.removeElbowBrackets">
+									YES
+								</md-switch>
+							</div>
+						</td>
+						<td md-cell>
+							<div layout="row" layout-align="start center" flex>
+								<span>NO</span>
+								<md-switch class="md-primary" style="margin-left: 8px;" name="wrapErrorResponse" ng-model="item.wrapErrorResponse">
+									YES
+								</md-switch>
+							</div>
+						</td>
+						<td md-cell style="padding: 0px;">
+							<div layout="row" flex>
+								<md-input-container flex>
+                                    <label>Select Parameter</label>
+									<md-select aria-label="test" style="margin-top: 8px" multiple ng-model="item.parameters"
+											   md-on-close="clearSearchTerm()" md-container-class="selectdemoSelectHeader">
+										<md-select-header style="padding-left: 16px; height: 48px; cursor: pointer; position: relative; display: flex; width: auto;">
+											<input ng-model="searchTerm" aria-label="Search Parameters" type="search" ng-keydown="$event.stopPropagation()"
+												   placeholder="Select Parameter" style="border: none;outline: none;height: 100%;width: 100%;padding: 0;">
+										</md-select-header>
+										<md-option ng-repeat="param in apiParameters | filter:searchTerm track by param.id" ng-value="param.id">
+											{{ param.paramName }} - {{ param.paramType }}
+										</md-option>
+									</md-select>
+								</md-input-container>
+							</div>
+						</td>
+					</tr>
+					<tr md-row ng-repeat="x in apiEndpoints | filter: activity.search" style="cursor: pointer;" ng-style="x.edited ? {'background-color': 'lightgrey'} : {}" ng-dblclick="editThisRow(x)">
+						<td md-cell>
+							<div layout="row" layout-align="center center" style="font-size: 14px; cursor: pointer; outline: 0;">
+								<md-icon style="margin: 0 10px;color: #2065ac;" ng-if="!x.edited" ng-click="deleteApiEndpoint($event, x)">delete</md-icon>
+								<md-icon style="margin: 0 10px;color: #2065ac;" ng-if="x.edited" ng-click="cancelEdit(x)">close</md-icon>
+								<md-icon style="margin: 0 10px;color: #2065ac;" ng-if="x.edited" ng-click="saveEdit($event, item)">save</md-icon>
+							</div>
+						</td>
+						<td md-cell>
+							<div layout="row" layout-align="center center">
+								{{ x.id }}
+							</div>
+						</td>
+						<td md-cell>
+							<span ng-if="!x.edited">{{ x.apiName }}</span>
+							<md-input-container md-no-float layout="row" style="margin: 0px; padding: 0px;" ng-if="x.edited">
+								<input name="apiName" ng-model="item.apiName" aria-label="apiName"/>
+							</md-input-container>
+						</td>
+						<td md-cell>
+							<span ng-if="!x.edited">{{ x.apiDescription }}</span>
+							<md-input-container md-no-float layout="row" style="margin: 0px; padding: 0px;" ng-if="x.edited">
+								<input name="apiDescription" ng-model="item.apiDescription" aria-label="apiDescription"/>
+							</md-input-container>
+						</td>
+						<td md-cell style="padding: 0px;">
+							<div layout="row" flex>
+								<span ng-if="!x.edited">{{ x.httpMethod }}</span>
+								<md-input-container layout="row" md-no-float layout-align="start center" style="margin: 0px; padding: 0px;" ng-if="x.edited">
+									<md-select name="httpMethod" ng-model="item.httpMethod" aria-label="httpMethod">
+										<md-option value="GET">GET</md-option>
+										<md-option value="POST">POST</md-option>
+										<md-option value="PUT">PUT</md-option>
+										<md-option value="DELETE">DELETE</md-option>
+									</md-select>
+								</md-input-container>
+							</div>
+						</td>
+						<td md-cell>
+							<span ng-if="!x.edited">{{ x.apiBaseUrl }}</span>
+							<md-input-container md-no-float layout="column" style="margin: 0px; padding: 0px;" ng-if="x.edited">
+								<textarea name="apiBaseUrl" ng-model="item.apiBaseUrl" rows="2" aria-label="apiBaseUrl" placeholder="Endpoint URL" flex/>
+							</md-input-container>
+						</td>
+						<td md-cell>
+							<span ng-if="!x.edited">{{ x.header }}</span>
+							<md-input-container md-no-float layout="column" style="margin: 0px; padding: 0px;" ng-if="x.edited">
+								<input name="header" ng-model="item.header" aria-label="header"/>
+							</md-input-container>
+						</td>
+						<td md-cell>
+							<span ng-if="!x.edited">{{ x.headerType }}</span>
+							<md-input-container md-no-float layout="column" style="margin: 0px; padding: 0px;" ng-if="x.edited">
+								<input name="headerType" ng-model="item.headerType" aria-label="headerType"/>
+							</md-input-container>
+						</td>
+						<td md-cell>
+							<span ng-if="!x.edited">{{ x.body }}</span>
+							<md-input-container md-no-float layout="column" style="margin: 0px; padding: 0px;" ng-if="x.edited">
+								<input name="body" ng-model="item.body" aria-label="body"/>
+							</md-input-container>
+						</td>
+						<td md-cell>
+							<span ng-if="!x.edited">{{ x.bodyFormat }}</span>
+							<md-input-container md-no-float layout="column" style="margin: 0px; padding: 0px;" ng-if="x.edited">
+								<input name="bodyFormat" ng-model="item.bodyFormat" aria-label="bodyFormat"/>
+							</md-input-container>
+						</td>
+						<td md-cell>
+							<span ng-if="!x.edited">{{ x.forceJsonResponse === true ? 'YES' : 'NO'}}</span>
+							<div layout="row" layout-align="start center" ng-if="x.edited" flex>
+								<span>NO</span>
+								<md-switch class="md-primary" style="margin-left: 8px;" name="forceJsonResponse" ng-model="item.forceJsonResponse">
+									YES
+								</md-switch>
+							</div>
+						</td>
+						<td md-cell>
+							<span ng-if="!x.edited">{{ x.removeElbowBrackets === true ? 'YES' : 'NO'}}</span>
+							<div layout="row" layout-align="start center" ng-if="x.edited" flex>
+								<span>NO</span>
+								<md-switch class="md-primary" style="margin-left: 8px;" name="removeElbowBrackets" ng-model="item.removeElbowBrackets">
+									YES
+								</md-switch>
+							</div>
+						</td>
+						<td md-cell>
+							<span ng-if="!x.edited">{{ x.wrapErrorResponse === true ? 'YES' : 'NO'}}</span>
+							<div layout="row" layout-align="start center" ng-if="x.edited" flex>
+								<span>NO</span>
+								<md-switch class="md-primary" style="margin-left: 8px;" name="wrapErrorResponse" ng-model="item.wrapErrorResponse">
+									YES
+								</md-switch>
+							</div>
+						</td>
+						<td md-cell style="padding: 0px;">
+							<span ng-if="!x.edited">{{ getArrayObjectValue(x.params, 'paramName') }}</span>
+							<div layout="column" flex ng-if="x.edited">
+								<md-input-container flex>
+                                    <label>Select Parameter</label>
+									<md-select aria-label="test" style="margin-top: 8px" multiple ng-model="item.parameters" md-on-close="clearSearchTerm()" md-container-class="selectdemoSelectHeader">
+										<md-select-header style="padding-left: 16px; height: 48px; cursor: pointer; position: relative; display: flex; width: auto;">
+											<input ng-model="searchTerm" aria-label="Search Parameters" type="search" ng-keydown="$event.stopPropagation()"
+												   placeholder="Select Parameter" style="border: none;outline: none;height: 100%;width: 100%;padding: 0;">
+										</md-select-header>
+										<md-option ng-repeat="param in apiParameters | filter:searchTerm track by param.id" ng-value="param.id">
+											{{ param.paramName }} - {{ param.paramType }}
+										</md-option>
+									</md-select>
+								</md-input-container>
+							</div>
+						</td>
+					</tr>
+					</tbody>
+				</table>
+			</md-table-container>
+		</md-card>
+	</div>
+</md-content>

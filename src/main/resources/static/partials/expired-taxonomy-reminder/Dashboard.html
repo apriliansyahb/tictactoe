@@ -1,0 +1,106 @@
+<md-content class="md-padding general-background" layout="column">
+	<div class="md-padding">
+		<h1 style="color: white; margin: 0px 20px;">Dashboard</h1>
+		<div layout="row" layout-align="end center" style="margin: 0px 20px;">
+<!--			<span style="color: #ffffff">Last Updated, {{ currentTime }}</span>-->
+			<md-select ng-model="selectedTime" md-no-underline style="text-align: center; background-color: white; color: #2065ac;"
+					   ng-change="getDashboardSummary(); getDashboardTrend();" flex="15" aria-label="range-time">
+				<md-option ng-repeat="x in rangeTime" ng-value="x">{{ x }}</md-option>
+			</md-select>
+		</div>
+		<div layout="row" layout-align="space-between" flex>
+			<md-card md-whiteframe="4" style="border-radius: 5px; padding: 25px; margin: 8px 16px;" flex>
+				<span class="card-custom-title" style="margin-bottom: 10px;">Total BID</span><br>
+		        <div layout="row" class="txt-info" flex>
+		     		<div layout="column" style="text-align: center;" flex>
+		     			<span class="card-custom-header" style="text-align: left;">{{ card.totalBid }}</span>
+		     			<div style="height: 5px"></div>
+		     			<span class="card-custom-subheader" style="color: #ffffff">span</span>
+						<span class="card-custom-subheader" style="color: #ffffff">span</span>
+						<span class="card-custom-subheader" style="color: #ffffff">span</span>
+		     		</div>
+		     	</div>
+		     </md-card>
+			<md-card md-whiteframe="4" style="cursor: pointer; border-radius: 5px; padding: 25px; margin: 8px 16px;" flex>
+				<span class="card-custom-title" style="margin-bottom: 10px;">Will Be Expired</span><br>
+		     	<div layout="row" class="txt-warn" flex>
+		     		<div layout="column" style="text-align: center;" flex>
+						<div layout="row" layout-align="space-between">
+							<span class="card-custom-header">{{ card.totalExpiringTaxo }}</span>
+							<span class="card-custom-header">{{ card.totalExpiringMl }}</span>
+						</div>
+		     			<md-progress-linear class="warn" md-mode="determinate" value="{{ 1 / 2 * 100 }}" style="transform: scaleY(0.5) rotate(180deg);"></md-progress-linear>
+						<div layout="row" layout-align="space-between">
+							<span style="color: #aeb6bf">BID</span>
+							<span style="color: #aeb6bf">Menu Level</span>
+						</div>
+						<span class="card-custom-subheader" style="color: #ffffff">span</span>
+		     		</div>
+		     	</div>
+		    </md-card>
+			<md-card md-whiteframe="4" style="cursor: pointer; border-radius: 5px; padding: 25px; margin: 8px 16px;" flex>
+				<span class="card-custom-title" style="margin-bottom: 10px;">Expired</span><br>
+				<div layout="row" class="txt-danger" flex>
+					<div layout="column" style="text-align: center;" flex>
+						<div layout="row" layout-align="space-between">
+							<span class="card-custom-header">{{ card.totalExpiredTaxo }}</span>
+							<span class="card-custom-header">{{ card.totalExpiredMl }}</span>
+						</div>
+						<md-progress-linear class="danger" md-mode="determinate" value="{{ 1 / 2 * 100 }}" style="transform: scaleY(0.5) rotate(180deg);"></md-progress-linear>
+						<div layout="row" layout-align="space-between">
+							<span style="color: #aeb6bf">BID</span>
+							<span style="color: #aeb6bf">Menu Level</span>
+						</div>
+						<span class="card-custom-subheader" style="color: #ffffff">span</span>
+					</div>
+				</div>
+			</md-card>
+		</div>
+		<div layout="row" style="margin-top: 25px;" flex>
+			<md-card class="md-padding" md-whiteframe="6" style="border-radius: 10px; margin: 8px 16px;" flex="75">
+				<div layout="column">
+					<h3 style="margin-left: 7px" class="txt-info">EXPIRATION TREND - DAILY</h3>
+					<div layout="row" style="margin: 0 0 14px 7px;">
+						<span class="badge-dot">
+							<i class="bg-warn"></i>
+							<span class="txt-info">Will be Expired</span>
+						</span>
+						<div style="width:  20px;"></div>
+						<span class="badge-dot">
+							<i class="bg-danger"></i>
+							<span class="txt-info">Expired</span>
+						</span>	
+					</div>
+					<div style="max-height: 450px">
+						<canvas class="chart chart-bar" style="height: 450px;" chart-data="data" chart-labels="labels" chart-colors="colors" chart-options="options" chart-series="series" chart-dataset-override="datasetOverride"></canvas>
+					</div>
+				</div>
+			</md-card>
+			<md-card class="md-padding" md-whiteframe="6" style="border-radius: 10px; margin: 8px 16px;" flex>
+				<div layout="column" flex>
+					<h3 class="txt-info" style="margin-left: 10px;">ALERT</h3>
+					<canvas class="chart chart-doughnut" chart-data="data2" chart-labels="labels2" chart-colors="colors2" chart-options="options2" style="margin: 10px"></canvas>
+					<div flex></div>
+					<div layout="column" layout-align="space-between start" style="margin: 20px 10px;" flex="nogrow">
+						<div class="badge-square">
+							<i class="bg-danger"></i>
+							<span class="txt-info">Unacknowledged</span>
+						</div>
+						<div class="badge-square">
+							<i class="bg-warn2"></i>
+							<span class="txt-info">Acknowledged</span>
+						</div>
+						<div class="badge-square">
+							<i class="bg-success"></i>
+							<span class="txt-info">Resolved</span>
+						</div>
+					</div>
+					<md-divider style="margin: 10px 0 10px 0;"></md-divider>
+					<div layout="column" layout-align="end end">
+						<a style="color: #3b78b6;margin-top: 10px;" href="#!/alert-and-notification">Manage Alert</a>
+					</div>
+				</div>
+			</md-card>
+		</div>
+	</div>
+</md-content>

@@ -1,0 +1,197 @@
+<md-content class="md-padding general-background" layout="column">
+	<div class="md-padding">
+		<h2 style="color: white; margin-left: 10px;">Configuration</h2>
+		<md-card md-whiteframe="4" style="border-radius: 10px;">
+			<h3 style="margin-left: 24px;">All Rules</h3>
+			<md-toolbar class="md-table-toolbar md-default">
+				<div class="md-toolbar-tools" layout="row" flex>
+					<md-input-container layout-align="center center" md-no-float style="margin: 0px; padding-right: 24px;" flex>
+						<md-icon style="margin-top: 20px;">search</md-icon>
+						<input ng-model="activity.search" type="text" placeholder="RULE NAME, DAY SENT, RECIPIENT, etc"
+							   aria-label="Search" style="font-size: 0.8em; margin-top: 20px;">
+					</md-input-container>
+					<div layout="row" layout-align="center center" style="font-size: 14px; cursor: pointer; outline: 0;" flex="10" ng-click="">
+						<span style="color: #2065ac;">Filters</span>
+						<md-icon style="margin: 0 10px;color: #2065ac;">filter_list</md-icon>
+					</div>
+					<div layout="row" layout-align="end center" style="font-size: 14px; cursor: pointer; outline: 0;" flex="10" ng-click="showFormNewRule()">
+						<span style="color: #2065ac;">Add New Rule</span>
+						<md-icon style="margin: 0 10px;color: #2065ac;">add_circle</md-icon>
+					</div>
+				</div>
+			</md-toolbar>
+
+			<md-table-container style="margin-bottom: 20px;">
+				<table md-table class="nobordertop headborderbottom" md-row-select multiple ng-model="search.selected">
+					<thead md-head md-order="activity.inputSortBy">
+						<tr md-row>
+							<th md-column md-order-by="name">RULE NAME</th>
+							<th md-column md-order-by="daySent">DAY SENT</th>
+							<th md-column md-order-by="type">TYPE</th>
+							<th md-column md-order-by="recipients">RECIPIENT
+								<md-button class="md-icon-button">
+									<md-tooltip md-direction="top">Use comma to separate recipient</md-tooltip>
+									<md-icon>info</md-icon>
+								</md-button>
+							</th>
+							<th md-column md-order-by="thresholdExpiring" style="width: 200px;">THRESHOLD<br>WILL BE EXPIRED</th>
+							<th md-column md-order-by="thresholdExpired" style="width: 200px;">THRESHOLD<br>EXPIRED</th>
+							<th md-column style="text-align: center; width: 50px">ENABLE</th>
+							<th md-column style="text-align: center; width: 50px">ACTION</th>
+						</tr>
+					</thead>
+					<tbody md-body>
+						<tr ng-hide="search.data.length">
+							<td colspan="6" md-row style="padding:24px;text-align:center">
+								No Data Available.
+							</td>
+						</tr>
+						<tr md-row ng-if="newRule">
+							<td md-cell>
+								<div layout="row" layout-align="center center" layout-padding="5" flex="nogrow">
+									<input name="name" ng-model="item.name" aria-label="name" style="height: 40px;" flex/>
+								</div>
+							</td>
+							<td md-cell>
+								<div layout="row" layout-align="center center" flex="nogrow">
+									<md-select name="daySent" ng-model="item.daySent" aria-label="daySent" ng-change="changeDaySent()" multiple flex>
+										<md-option ng-repeat="schedule in schedules" ng-value="schedule">{{ schedule }}</md-option>
+									</md-select>
+								</div>
+							</td>
+							<td md-cell>
+								<div layout="row" layout-align="center center" flex="nogrow">
+									<md-select name="type" ng-model="item.type" aria-label="type" flex>
+										<md-option ng-repeat="type in types" ng-value="type">{{ type }}</md-option>
+									</md-select>
+								</div>
+							</td>
+							<td md-cell>
+								<div layout="row" flex="nogrow">
+									<textarea name="recipients" ng-model="item.recipients" aria-label="recipients" style="height: 100px;" flex></textarea>
+								</div>
+							</td>
+							<td md-cell>
+								<div layout="row" layout-align="center center" layout-padding="5" flex="nogrow">
+									<input name="expiryThreshold" ng-model="item.expiryThreshold" aria-label="expiryThreshold" style="height: 40px;" flex/>
+									<span flex>Days</span>
+								</div>
+							</td>
+							<td md-cell>
+								<div layout="row" layout-align="center center" layout-padding="5" flex="nogrow">
+									<input name="expiredThreshold" ng-model="item.expiredThreshold" aria-label="expiredThreshold" style="height: 40px;" flex/>
+									<span flex>Days</span>
+								</div>
+							</td>
+							<td md-cell>
+								<div layout="row" layout-align="start center" flex>
+									<md-switch class="md-primary" style="margin-left: 8px;" name="enable" aria-label="enable"
+											   ng-model="item.enable">
+									</md-switch>
+								</div>
+							</td>
+							<td md-cell>
+								<div layout="row" layout-align="center center">
+									<md-button class="md-icon-button" ng-click="addRule($event, item)">
+										<md-tooltip md-direction="bottom">Add Rule</md-tooltip>
+										<md-icon style="color: #2065ac;">save</md-icon>
+									</md-button>
+									<md-button class="md-icon-button" ng-click="closeFormNewRule(x)">
+										<md-tooltip md-direction="bottom">Close</md-tooltip>
+										<md-icon style="color: #2065ac;">close</md-icon>
+									</md-button>
+								</div>
+							</td>
+						</tr>
+						<tr md-row ng-repeat="x in search.data | orderBy: activity.inputSortBy | filter: activity.search" class="selectable" md-select="x">
+							<td md-cell>{{ x.name }}</td>
+							<td md-cell>
+								<span ng-if="!x.edited">{{ x.triggerDays }}</span>
+								<div layout="row" layout-align="center center" ng-if="x.edited" flex="nogrow">
+									<md-select name="daySent" ng-model="item.daySent" aria-label="daySent" ng-change="changeDaySent()" multiple flex>
+										<md-option ng-repeat="schedule in schedules" ng-value="schedule">{{ schedule }}</md-option>
+									</md-select>
+								</div>
+							</td>
+							<td md-cell>
+								<span ng-if="!x.edited">{{ x.type }}</span>
+								<div layout="row" layout-align="center center" ng-if="x.edited" flex="nogrow">
+									<md-select name="type" ng-model="item.type" aria-label="type" flex>
+										<md-option ng-repeat="type in types" ng-value="type">{{ type }}</md-option>
+									</md-select>
+								</div>
+							</td>
+							<td md-cell>
+								<div layout="column" flex ng-if="!x.edited">
+									<span ng-repeat="recipient in x.recipients.split(',')">{{ recipient }}</span>
+								</div>
+								<div layout="row" ng-if="x.edited" flex="nogrow">
+									<textarea name="recipients" ng-model="item.recipients" aria-label="recipients" style="height: 100px;" flex></textarea>
+								</div>
+							</td>
+							<td md-cell>
+								<span ng-if="!x.edited">{{ x.expiryThreshold }}</span>
+								<div layout="row" layout-align="center center" layout-padding="5" ng-if="x.edited" flex="nogrow">
+<!--									<md-select name="thresholdExpiringOperation" style="text-align: center;" ng-model="item.thresholdExpiringOperation" aria-label="thresholdExpiringOperation" flex>-->
+<!--										<md-option value="=">=</md-option>-->
+<!--										<md-option value="<"><</md-option>-->
+<!--										<md-option value=">">></md-option>-->
+<!--									</md-select>-->
+									<input name="expiryThreshold" ng-model="item.expiryThreshold" aria-label="expiryThreshold" style="height: 40px;" flex/>
+									<span flex>Days</span>
+								</div>
+							</td>
+							<td md-cell>
+								<span ng-if="!x.edited">{{ x.expiredThreshold }}</span>
+								<div layout="row" layout-align="center center" layout-padding="5" ng-if="x.edited" flex="nogrow">
+<!--									<md-select name="thresholdExpiredOperation" style="text-align: center;" ng-model="item.thresholdExpiredOperation" aria-label="thresholdExpiredOperation" flex>-->
+<!--										<md-option value="=">=</md-option>-->
+<!--										<md-option value="<"><</md-option>-->
+<!--										<md-option value=">">></md-option>-->
+<!--									</md-select>-->
+									<input name="expiredThreshold" ng-model="item.expiredThreshold" aria-label="expiredThreshold" style="height: 40px;" flex/>
+									<span flex>Days</span>
+								</div>
+							</td>
+							<td md-cell>
+								<div layout="row" layout-align="start center" flex>
+									<md-switch class="md-primary" style="margin-left: 8px;" name="enable" aria-label="enable"
+											   ng-change="changeEnableRule($event, x)" ng-model="x.enable" ng-if="!x.edited">
+									</md-switch>
+									<md-switch class="md-primary" style="margin-left: 8px;" name="enable" aria-label="enable"
+											   ng-model="item.enable" ng-if="x.edited">
+									</md-switch>
+								</div>
+							</td>
+							<td md-cell>
+								<div layout="row" layout-align="center center">
+									<md-button class="md-icon-button" ng-if="!x.edited" ng-click="editRule(x)">
+										<md-tooltip md-direction="bottom">Edit Rule</md-tooltip>
+										<md-icon style="color: #2065ac;">edit</md-icon>
+									</md-button>
+									<md-button class="md-icon-button" ng-if="x.edited" ng-click="closeRule(x)">
+										<md-tooltip md-direction="bottom">Close Edit</md-tooltip>
+										<md-icon style="color: #2065ac;">close</md-icon>
+									</md-button>
+									<md-button class="md-icon-button" ng-if="x.edited" ng-click="saveRule($event, item)">
+										<md-tooltip md-direction="bottom">Save Rule</md-tooltip>
+										<md-icon style="color: #2065ac;">save</md-icon>
+									</md-button>
+									<md-button class="md-icon-button" ng-click="deleteRule($event, x)">
+										<md-tooltip md-direction="bottom">Delete Rule</md-tooltip>
+										<md-icon style="color: red;">delete</md-icon>
+									</md-button>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</md-table-container>
+
+			<md-table-pagination md-limit="dataTable.limit" md-page="dataTable.pageable.pageNumber"
+								 md-limit-options="[5,10,50]" md-on-paginate="getAllNotificationRule"
+								 md-total="{{dataTable.totalElements}}" md-page-select>
+			</md-table-pagination>
+		</md-card>
+	</div>
+</md-content>

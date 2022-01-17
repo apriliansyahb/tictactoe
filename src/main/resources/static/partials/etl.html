@@ -1,0 +1,129 @@
+<md-content class="md-padding" layout="column">
+	<div class="md-padding">
+		<h2>Extract Transform Load</h2>
+		
+		<div layout="row" style="margin-top:16px; margin-bottom:24px">
+			
+			<md-button class="md-raised" ng-click="pick('uploadSource')"
+				ng-disabled="operation == 'uploadSource'">Upload Source</md-button>
+			<md-button class="md-raised" ng-click="pick('transformFromDB')"
+				ng-disabled="operation == 'transformFromDB'">Transform From DB</md-button>
+			
+			<md-button class="md-raised" ng-click="pick('export')" ng-show="false"
+				ng-disabled="operation == 'export'">Upload Source & Transform</md-button>
+			<md-button class="md-raised" ng-click="pick('import')"
+				ng-disabled="operation == 'import'">Load XML to Catalog</md-button>
+		</div>
+	
+		<md-card-content>
+			<md-input-container class="md-block" style="margin-bottom:32px" 
+				ng-show="operation == 'export' || operation == 'uploadSource' || operation == 'transformFromDB'"> 
+				<label>Package</label> 
+				<md-select ng-model="exportRequest.templateName" 
+					ng-change="find()"
+					ng-disabled="exportRequest.catalogOperation.includes('Export') || exportRequest.catalogOperation.includes('Import')">
+					<md-option ng-repeat="x in templates" value="{{x}}">
+				    		{{x}}
+				    </md-option>
+			 	</md-select>
+			</md-input-container>
+			
+			<md-input-container class="md-block" style="margin-bottom:0"
+				ng-show="operation == 'export'">
+				<label>Filename</label> 
+				<input ng-model="exportRequest.filename"/>
+			</md-input-container>
+			
+			<div layout-align="start end" layout="row"
+				style="margin-top: -16px" ng-show="operation == 'import'">
+				<aps-upload-file flex layout="row" ng-model="file" ng-change="check()"></aps-upload-file>
+			</div>
+			
+			<div layout="row" ng-repeat="x in files" 
+				ng-show="operation == 'export' || operation == 'uploadSource'" >
+				<md-button class="md-icon-button" 
+					style="margin:auto" ng-disabled="files.length == 1"
+					ng-click="removeFiles($index)"> 
+					<md-icon class="material-icons md-warn" >clear</md-icon>
+				</md-button>
+				<md-card  layout="row" flex>
+					<md-card-content layout-align="start end" layout="row" layout-wrap flex>
+						<aps-upload-file flex="33" layout="row" ng-model="y.file" ng-change="check()"
+							ng-repeat="y in x" placeholder="y.placeholder"></aps-upload-file>
+					</md-card-content>
+				</md-card>
+			</div>
+			
+			<!-- Hide for a while -->
+			<!--  
+			<md-button class="md-icon-button" ng-click="removeProperty($event, x)" style="margin:0"
+				ng-show="files.length && (operation == 'export' || operation == 'uploadSource')"> 
+					<md-icon class="material-icons md-primary" ng-click="addFiles()">add</md-icon>
+			</md-button>
+			-->
+			<!-- Hide for a while -->
+			
+			<md-card ng-show="operation == 'transformFromDB'">
+				<md-toolbar class="md-table-toolbar md-default" ng-show="entities.filter">
+					<div class="md-toolbar-tools">
+						<md-icon class="material-icons">search</md-icon>
+					
+						<form name="searchForm" flex style="padding: 20px 20px 0 20px">
+							<md-input-container md-no-float class="md-block">
+							<input ng-model="entities.search" placeholder="Search"
+								focus-on="entities.filter"
+								my-enter="retrieve()"> </md-input-container>
+						</form>
+					
+						<md-button class="md-icon-button" aria-label="Close"
+							ng-click="entities.filter = false; entities.search = ''; retrieve()"> <md-icon
+							class="material-icons">close</md-icon></md-button>
+					</div>
+				</md-toolbar>
+				<md-toolbar class="md-table-toolbar md-default" ng-show="!entities.filter">
+				  <div class="md-toolbar-tools">
+				    <span>Product</span>
+				    <md-button class="md-icon-button" aria-label="Filter"
+						ng-click="entities.filter = true"> 
+						<md-icon class="material-icons">search</md-icon>
+					</md-button>
+				  </div>
+				</md-toolbar>
+				<md-table-container>
+				  <table md-table
+				  	md-row-select multiple ng-model="entities.selected">
+				    <thead md-head md-order="entities.order" md-on-reorder="retrieve">
+				      <tr md-row>
+				        <th md-column> Product </th>
+				      </tr>
+				    </thead>
+				    <tbody md-body>
+				      <tr md-row ng-repeat="x in entities.data"
+				      	md-select="x" md-select-id="$index" md-auto-select>
+				        <td md-cell>{{x.productId}}</td>
+				      </tr>
+				    </tbody>
+				  </table>
+				</md-table-container>
+				
+				<md-table-pagination md-limit="entities.limit" md-limit-options="[5, 15, 30, 50, 100, 250, 500]" 
+					md-page="entities.page" md-total="{{entities.length}}" md-on-paginate="retrieve" md-page-select>
+				</md-table-pagination>
+			</md-card>
+		</md-card-content>
+		
+		<div layout="row">
+			<md-button style="width:200px" class="md-raised md-warn" ng-click="clear()">Clear</md-button>
+			<div flex></div>
+
+			<md-button style="width:200px" md-colors="!buttondisabled ? {'background':'green'} : {}" class="md-raised md-primary" ng-click="uploadAndConvert()"
+				ng-disabled="buttondisabled" ng-show="operation == 'uploadSource'">Run</md-button>
+			<md-button style="width:200px" md-colors="!buttondisabled ? {'background':'green'} : {}" class="md-raised md-primary" ng-click="transformFromDB()"
+				ng-disabled="buttondisabled" ng-show="operation == 'transformFromDB'">Run</md-button>		
+			<md-button style="width:200px" md-colors="!buttondisabled ? {'background':'green'} : {}" class="md-raised md-primary" ng-click="run()"
+				ng-disabled="buttondisabled" ng-show="operation == 'export'">Run</md-button>
+			<md-button style="width:200px" md-colors="!buttondisabled ? {'background':'green'} : {}" class="md-raised md-primary" ng-click="run()"
+				ng-disabled="buttondisabled" ng-show="operation == 'import'">Run</md-button>
+		</div>
+	</div>
+</md-content>

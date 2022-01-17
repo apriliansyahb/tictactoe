@@ -1,0 +1,621 @@
+<md-content class="md-padding" layout="column">
+	
+	<div class="md-padding" ng-if="type == 'Export'">
+		<h2>Changeset - {{subtitle}}</h2>
+		
+		<md-card-content>
+			<div layout="row" style="margin-top:15px" flex>
+				<h5>Details</h5>
+			</div>
+			
+			<md-card class="right-shadow" style="padding-left: 10px; margin-bottom: 20px">
+				<md-input-container class="md-block" style="margin-bottom:32px" ng-if="true">
+					<label>Template Name</label> 
+					<md-select ng-model="request.template" 
+						ng-change="changeTemplateName(); find()" >
+						<md-option ng-repeat="x in templates" value="{{x}}">
+					    		{{x}}
+					    </md-option>
+				 	</md-select>
+				</md-input-container>
+				
+				<md-input-container class="md-block" style="margin-bottom:0" ng-if="true">
+					<label>Export Filename</label>
+					<input ng-model="request.filename"/>
+				</md-input-container>
+			
+			</md-card>
+		</md-card-content>
+		
+		
+		<div layout="row" style="margin-top:15px" 
+			ng-if="!exportRequest.exportByCollection" flex>
+			<h5>Search Entities</h5>
+		</div>
+		<md-card class="right-shadow" ng-if="!exportRequest.exportByCollection">
+			<div layout="row">
+				<md-input-container class="md-block" style="margin-bottom:0"
+					ng-if="!exportRequest.exportByCollection" ng-keydown="$event.keyCode == 13 && find()" flex>
+					<label>Entity Name or BID </label> 
+					<input ng-model="searchPage.search"/>
+				</md-input-container>
+				<md-button style="width:50px; height:20px; margin-left: 15px;" 
+					class="md-raised md-warn" ng-click="find()" 
+					ng-disabled="disableSearchButton" md-colors="!disableSearchButton ? {'background':'green'} : {}">
+					Search
+				</md-button>
+			</div>
+		
+			<md-table-container>
+				<table md-table class="nobordertop headborderbottom"
+					md-row-select multiple ng-model="searchPage.selected">
+					<thead md-head md-order="searchPage.order" md-on-reorder="find">
+						<tr md-row>
+							<th md-column md-order-by="name">Name</th>
+							<th md-column md-order-by="businessID">BID</th>
+							<th md-column md-order-by="publicID">GUID</th>
+							<th md-column md-order-by="versionNumber">Version Number</th>
+							<th md-column md-order-by="workflowStatus">Workflow Status</th>
+						</tr>
+					</thead>
+					<tbody md-body>
+						<tr ng-hide="(searchPage.data).length">
+							<td colspan="5" md-row style="padding:24px;text-align:center">
+								No Data Available.
+							</td>
+						</tr>
+						<tr md-row ng-repeat="x in searchPage.data "
+							class="selectable" md-select="x" md-select-id="publicID" md-on-select="check" md-on-deselect="check" md-auto-select>
+							<td md-cell>{{x.name}}</td>
+							<td md-cell>{{x.businessID}}</td>
+							<td md-cell>{{x.publicID}}</td>
+							<td md-cell>{{x.versionNumber}}</td>
+							<td md-cell>{{x.workflowStatus}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</md-table-container>
+			<md-table-pagination md-limit="dataTable.pageSize" md-page="dataTable.pageNumber"
+				md-limit-options="[5,10,50]" md-on-paginate="find"
+				md-total="{{dataTable.totalElements}}" md-page-select>
+			</md-table-pagination>
+		</md-card>
+		
+		<div layout="row" style="margin-top:20px" flex ng-if="!exportRequest.exportByCollection">
+			<h5>Selected Entities <span style="color:red">*</span></h5>
+		</div>
+		<md-card class="right-shadow" ng-if="!exportRequest.exportByCollection">
+			<md-table-container>
+				<table md-table class="nobordertop headborderbottom" md-row-select multiple ng-model="searchPage.selected">
+					<thead md-head>
+						<tr md-row>
+							<th md-column>Name</th>
+							<th md-column>BID</th>
+							<th md-column>GUID</th>
+							<th md-column>Version Number</th>
+							<th md-column>Workflow Status</th>
+						</tr>
+					</thead>
+					<tbody md-body>
+						<tr ng-hide="searchPage.selected.length">
+							<td colspan="5" md-row style="padding:24px;text-align:center">
+								No Data Available.
+							</td>
+						</tr>
+						<tr md-row ng-repeat="x in searchPage.selected | orderBy: 'name' | limitTo: searchPage.selected.length : (searchx.page - 1) * searchPage.selected.length"	
+							class="selectable" md-select="x" md-select-id="$index" md-on-select="check" md-on-deselect="check" md-auto-select>
+							<td md-cell>{{x.name}}</td>
+							<td md-cell>{{x.businessID}}</td>
+							<td md-cell>{{x.publicID}}</td>
+							<td md-cell>{{x.versionNumber}}</td>
+							<td md-cell>{{x.workflowStatus}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</md-table-container>
+			<md-table-pagination md-limit="searchPage.selected.length" md-page="searchx.page" md-total="{{searchPage.selected.length}}" md-page-select>
+			</md-table-pagination>
+		</md-card>
+		
+		<div layout="row">
+			<md-button style="width:200px" class="md-raised md-warn" ng-click="clear()">Clear</md-button>
+			<div flex></div>
+			<md-button md-colors="searchPage.selected.length ? {'background':'green'} : {}" style="width:200px" class="md-raised md-primary" ng-click="run()"
+				ng-disabled="!searchPage.selected.length">Run</md-button>
+		</div>
+	
+	</div>
+	
+	<div class="md-padding" ng-if="type == 'Basic'">
+		<h2>Changeset - {{subtitle}}</h2>
+		<form layout="column" name="form">
+		
+			<div layout="row" style="margin-top:20px" flex>
+				<h5>Additional Configuration</h5>
+			</div>
+			<md-card class="right-shadow" style="padding-left: 10px; margin-bottom: 20px">
+	          <div layout="row" layout-wrap flex>
+	            <div flex="100">
+	              <md-checkbox ng-checked="" ng-if="true" ng-model="request.multipleChangeset">
+	                Multiple Changeset
+	              </md-checkbox>
+	              <md-checkbox ng-checked="" ng-if="true" ng-model="request.downloadXml">
+	                Download XML
+	              </md-checkbox>
+	              <md-checkbox ng-checked="" ng-if="true" ng-model="request.processByCollection" ng-click="clickProcessByCollection()">
+	                Process By Collections
+	              </md-checkbox>
+	            </div>
+	          </div>
+	        </md-card>
+		
+			<md-input-container class="md-block" style="margin-bottom:0">
+				<label>Name</label> 
+				<input ng-model="request.name" required name="name"/>
+				<div ng-messages="form.name.$error">
+                		<div ng-message="required">This is required.</div>
+              	</div>
+			</md-input-container>
+			
+			<md-input-container class="md-block" style="margin-bottom:0">
+				<label>Description</label> 
+				<textarea ng-model="request.description" rows="3" name="description"></textarea>
+			</md-input-container>
+			
+			<div layout="row" style="margin-top:20px" flex>
+				<h5>Entity Selector</h5>
+			</div>
+			<div layout="row">
+				<md-input-container class="md-block" flex> 
+					<label>Template</label> 
+					<md-select ng-model="request.template" name="template">
+						<md-option ng-repeat="x in templates" value="{{x}}">
+					    		{{x}}
+					    </md-option>
+				 	</md-select>
+				</md-input-container>
+				<md-input-container class="md-block" style="margin-right: 30px" flex ng-if="!request.processByCollection">
+					<label>Workflow Status</label> 
+						<md-select ng-model="request.workflowStatus" ng-change="checkFindEntityButton(); checkRunButton()" multiple>
+							<md-option ng-repeat="x in allowedWorkflowStatuses" value="{{x}}">
+								{{x}}
+							</md-option>
+					</md-select>
+				</md-input-container>
+			</div>
+			
+			<div layout="row" ng-if="!request.processByCollection">
+				<md-input-container class="md-block" style="margin-bottom:0"
+					ng-keydown="$event.keyCode == 13 && find()" flex>
+					<label>Entity Name or BID </label> 
+					<input ng-model="searchPage.search"/>
+				</md-input-container>
+				<md-button style="width:50px; height:20px; margin-left: 15px;" 
+					class="md-raised md-warn" ng-click="find()" 
+					ng-disabled="disableSearchButton" md-colors="!disableSearchButton ? {'background':'green'} : {}">
+					Search
+				</md-button>
+			</div>
+			<md-input-container class="md-block" style="margin-bottom:0" ng-if="request.processByCollection">
+				<textarea ng-model="request.bidOrNameCollections" rows="8" name="bidOrNameCollections" 
+					placeholder="Please input 'BID' or 'Entity Names', for separator you can use 'comma' or 'new line'">
+				</textarea>
+			</md-input-container>
+		</form>
+		
+		<div ng-if="!request.processByCollection">
+			<md-card class="right-shadow" >
+				<md-table-container>
+					<table md-table class="nobordertop headborderbottom"
+						md-row-select multiple ng-model="searchPage.selected">
+						<thead md-head md-order="searchPage.order" md-on-reorder="find">
+							<tr md-row>
+								<th md-column md-order-by="name">Name</th>
+								<th md-column md-order-by="businessID">BID</th>
+								<th md-column md-order-by="publicID">GUID</th>
+								<th md-column md-order-by="versionNumber">Version Number</th>
+								<th md-column md-order-by="workflowStatus">Workflow Status</th>
+							</tr>
+						</thead>
+						<tbody md-body>
+							<tr ng-hide="(searchPage.data).length">
+								<td colspan="5" md-row style="padding:24px;text-align:center">
+									No Data Available.
+								</td>
+							</tr>
+							<tr md-row ng-repeat="x in searchPage.data "
+								class="selectable" md-select="x" md-select-id="publicID" md-on-select="check" md-on-deselect="check" md-auto-select>
+								<td md-cell>{{x.name}}</td>
+								<td md-cell>{{x.businessID}}</td>
+								<td md-cell>{{x.publicID}}</td>
+								<td md-cell>{{x.versionNumber}}</td>
+								<td md-cell>{{x.workflowStatus}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</md-table-container>
+				<md-table-pagination md-limit="dataTable.pageSize" md-page="dataTable.pageNumber"
+					md-limit-options="[5,10,50]" md-on-paginate="find"
+					md-total="{{dataTable.totalElements}}" md-page-select>
+				</md-table-pagination>
+			</md-card>
+			
+			<div layout="row" style="margin-top:20px" flex>
+				<h5>Selected Entities <span style="color:red">*</span></h5>
+			</div>
+			<md-card class="right-shadow">
+				<md-table-container>
+					<table md-table class="nobordertop headborderbottom" md-row-select multiple ng-model="searchPage.selected">
+						<thead md-head>
+							<tr md-row>
+								<th md-column>Name</th>
+								<th md-column>BID</th>
+								<th md-column>GUID</th>
+								<th md-column>Version Number</th>
+								<th md-column>Workflow Status</th>
+							</tr>
+						</thead>
+						<tbody md-body>
+							<tr ng-hide="searchPage.selected.length">
+								<td colspan="5" md-row style="padding:24px;text-align:center">
+									No Data Available.
+								</td>
+							</tr>
+							<tr md-row ng-repeat="x in searchPage.selected | orderBy: 'name' | limitTo: searchPage.selected.length : (searchx.page - 1) * searchPage.selected.length"	
+								class="selectable" md-select="x" md-select-id="$index" md-on-select="check" md-on-deselect="check" md-auto-select>
+								<td md-cell>{{x.name}}</td>
+								<td md-cell>{{x.businessID}}</td>
+								<td md-cell>{{x.publicID}}</td>
+								<td md-cell>{{x.versionNumber}}</td>
+								<td md-cell>{{x.workflowStatus}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</md-table-container>
+				<md-table-pagination md-limit="searchPage.selected.length" md-page="searchx.page" md-total="{{searchPage.selected.length}}" md-page-select>
+				</md-table-pagination>
+			</md-card>
+		</div>
+		
+		<div layout="row">
+			<md-button style="width:200px" class="md-raised md-warn" ng-click="clear()">Clear</md-button>
+			<div flex></div>
+			<md-button md-colors="!(form.$invalid || !searchPage.selected.length) ? {'background':'green'} : {}" 
+				style="width:200px" class="md-raised md-primary" ng-click="run()"
+				ng-disabled="form.$invalid || !searchPage.selected.length" ng-if="!request.processByCollection">Run</md-button>
+				
+			<md-button md-colors="(request.name && request.template && request.bidOrNameCollections)? {'background':'green'} : {}" 
+				style="width:200px" class="md-raised md-primary" ng-click="run()"
+				ng-disabled="!request.name || !request.template || !request.bidOrNameCollections" ng-if="request.processByCollection">Run</md-button>
+		</div>
+	</div>
+	
+	<div class="md-padding" ng-if="type == 'Advanced'">
+		<h2>Changeset - {{subtitle}}</h2>
+		<form layout="column" name="formx">
+		
+			<div layout="row" style="margin-top:20px" flex>
+				<h5>Additional Configuration</h5>
+			</div>
+			<md-card class="right-shadow" style="padding-left: 10px; margin-bottom: 20px">
+	          <div layout="row" layout-wrap flex>
+	            <div flex="100">
+	              <md-checkbox ng-checked="" ng-if="true" ng-model="request.multipleChangeset">
+	                Multiple Changeset
+	              </md-checkbox>
+	              <md-checkbox ng-checked="" ng-if="true" ng-model="request.downloadXml">
+	                Download XML
+	              </md-checkbox>
+	              <md-checkbox ng-checked="" ng-if="true" ng-model="request.processByCollection" ng-click="clickProcessByCollection()">
+	                Process By Collections
+	              </md-checkbox>
+	            </div>
+	          </div>
+	        </md-card>
+			
+			<div layout="row" style="margin-top:15px" flex>
+				<h5>Details</h5>
+			</div>
+			<md-card class="right-shadow" style="padding-left: 10px; margin-bottom: 20px">
+				<md-input-container class="md-block" style="margin-bottom:0">
+					<label>Name</label> 
+					<input ng-model="request.name" required name="name"/>
+					<div ng-messages="formx.name.$error">
+	                		<div ng-message="required">This is required.</div>
+	              	</div>
+				</md-input-container>
+				
+				<md-input-container class="md-block" style="margin-bottom:0">
+					<label>Standard Naming</label> 
+					<input ng-model="request.standardNaming" required name="standardNaming" readonly/>
+					<div ng-messages="formx.standardNaming.$error">
+	                		<div ng-message="required">This is required.</div>
+	              	</div>
+				</md-input-container>
+				
+				<md-input-container class="md-block" style="margin-bottom:0" ng-hide=true>
+					<label>Audit Log</label> 
+					<input ng-model="request.auditLog" required name="auditLog" readonly/>
+					<div ng-messages="formx.auditLog.$error">
+	                		<div ng-message="required">This is required.</div>
+	              	</div>
+				</md-input-container>
+				
+				<md-input-container class="md-block" style="margin-bottom:0">
+					<label>Description</label> 
+					<textarea ng-model="request.description" rows="3" name="description"></textarea>
+				</md-input-container>
+				
+				<md-input-container class="md-block" style="margin-bottom:0">
+					<label>Team Contact Details</label> 
+					<input ng-model="request.teamContactDetails" required name="teamContactDetails"/>
+					<div ng-messages="formx.teamContactDetails.$error">
+	                		<div ng-message="required">This is required.</div>
+	              	</div>
+				</md-input-container>
+				
+				<div layout="row" flex>
+					<div style="position:relative; margin-right:-184px; visibility:hidden">
+						<md-datepicker 
+							ng-model="datepicker" md-is-open="dateopen" 
+							ng-change="pickDate(datepicker)">
+						</md-datepicker>
+					</div>
+					<md-input-container class="md-block" style="margin-bottom:0" flex>
+						<label>Target Release Date</label> 
+						<input ng-model="request.targetReleaseDate" required name="targetReleaseDate"
+							ng-focus="dateopen = true" readonly/>
+						<div ng-messages="formx.targetReleaseDate.$error">
+		                		<div ng-message="required">This is required.</div>
+		              	</div>
+					</md-input-container>
+				</div>
+			</md-card>
+			
+			<div layout="row" flex>
+				<h5 style="margin:auto">Team Owner <span style="color:red">*</span></h5>
+				
+				<md-input-container class="md-block" style="margin-bottom:0; margin-left:16px" flex>
+					<label>Search </label> 
+					<md-icon class="material-icons">search</md-icon>
+					<input ng-model="teamOwner.search"/>
+				</md-input-container>
+			</div>
+			<md-card class="right-shadow">
+				<md-table-container style="max-height:240px">
+					<table md-table class="nobordertop headborderbottom"
+						md-row-select multiple ng-model="teamOwner.selected">
+						<tbody md-body >
+							<tr ng-hide="(teamOwner.data | filter: teamOwner.search).length">
+								<td colspan="4" md-row style="padding:24px;text-align:center">
+									No Data Available.
+								</td>
+							</tr>
+							<tr md-row ng-repeat="x in teamOwner.data | orderBy: 'factName' | filter: teamOwner.search"
+								class="selectable" md-select="x" md-select-id="factGuid" md-auto-select>
+								<td md-cell>{{x.factName}}</td>
+								<td md-cell>{{x.factGuid}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</md-table-container>
+			</md-card>
+			
+			<div layout="row" flex>
+				<h5 style="margin:auto">Systems Impacted <span style="color:red">*</span></h5>
+				
+				<md-input-container class="md-block" style="margin-bottom:0; margin-left:16px" flex>
+					<label>Search </label> 
+					<md-icon class="material-icons">search</md-icon>
+					<input ng-model="systemsImpacted.search"/>
+				</md-input-container>
+			</div>
+			<md-card class="right-shadow">
+				<md-table-container style="max-height:240px">
+					<table md-table class="nobordertop headborderbottom"
+						md-row-select multiple ng-model="systemsImpacted.selected">
+						<tbody md-body >
+							<tr ng-hide="(systemsImpacted.data | filter: systemsImpacted.search).length">
+								<td colspan="4" md-row style="padding:24px;text-align:center">
+									No Data Available.
+								</td>
+							</tr>
+							<tr md-row ng-repeat="x in systemsImpacted.data | orderBy: 'factName' | filter: systemsImpacted.search"
+								class="selectable" md-select="x" md-select-id="factGuid" md-auto-select>
+								<td md-cell>{{x.factName}}</td>
+								<td md-cell>{{x.factGuid}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</md-table-container>
+			</md-card>
+			
+			<div layout="row" flex>
+				<h5 style="margin:auto">Service(s) Impacted <span style="color:red">*</span></h5>
+				
+				<md-input-container class="md-block" style="margin-bottom:0; margin-left:16px" flex>
+					<label>Search </label> 
+					<md-icon class="material-icons">search</md-icon>
+					<input ng-model="servicesImpacted.search"/>
+				</md-input-container>
+			</div>
+			<md-card class="right-shadow">
+				<md-table-container style="max-height:240px">
+					<table md-table class="nobordertop headborderbottom"
+						md-row-select multiple ng-model="servicesImpacted.selected">
+						<tbody md-body >
+							<tr ng-hide="(servicesImpacted.data | filter: servicesImpacted.search).length">
+								<td colspan="4" md-row style="padding:24px;text-align:center">
+									No Data Available.
+								</td>
+							</tr>
+							<tr md-row ng-repeat="x in servicesImpacted.data | orderBy: 'factName' | filter: servicesImpacted.search"
+								class="selectable" md-select="x" md-select-id="factGuid" md-auto-select>
+								<td md-cell>{{x.factName}}</td>
+								<td md-cell>{{x.factGuid}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</md-table-container>
+			</md-card>
+			
+			<div layout="row" flex>
+				<h5 style="margin:auto">Stakeholder(s) Impacted <span style="color:red">*</span></h5>
+				
+				<md-input-container class="md-block" style="margin-bottom:0; margin-left:16px" flex>
+					<label>Search </label> 
+					<md-icon class="material-icons">search</md-icon>
+					<input ng-model="stakeholdersImpacted.search"/>
+				</md-input-container>
+			</div>
+			<md-card class="right-shadow">
+				<md-table-container style="max-height:240px">
+					<table md-table class="nobordertop headborderbottom"
+						md-row-select multiple ng-model="stakeholdersImpacted.selected">
+						<tbody md-body >
+							<tr ng-hide="(stakeholdersImpacted.data | filter: stakeholdersImpacted.search).length">
+								<td colspan="4" md-row style="padding:24px;text-align:center">
+									No Data Available.
+								</td>
+							</tr>
+							<tr md-row ng-repeat="x in stakeholdersImpacted.data | orderBy: 'factName' | filter: stakeholdersImpacted.search"
+								class="selectable" md-select="x" md-select-id="factGuid" md-auto-select>
+								<td md-cell>{{x.factName}}</td>
+								<td md-cell>{{x.factGuid}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</md-table-container>
+			</md-card>
+			
+			<div layout="row" style="margin-top:20px" flex>
+				<h5>Entity Selector</h5>
+			</div>
+			
+			<div layout="row">
+				<md-input-container class="md-block" flex> 
+					<label>Template</label> 
+					<md-select ng-model="request.template" name="template">
+						<md-option ng-repeat="x in templates" value="{{x}}">
+					    		{{x}}
+					    </md-option>
+				 	</md-select>
+				</md-input-container>
+				<md-input-container class="md-block" style="margin-right: 30px" flex ng-if="!request.processByCollection">
+					<label>Workflow Status</label> 
+						<md-select ng-model="request.workflowStatus" ng-change="checkFindEntityButton(); checkRunButton()" multiple>
+							<md-option ng-repeat="x in allowedWorkflowStatuses" value="{{x}}">
+								{{x}}
+							</md-option>
+					</md-select>
+				</md-input-container>
+			</div>
+			
+			<div layout="row" ng-if="!request.processByCollection">
+				<md-input-container class="md-block" style="margin-bottom:0" 
+					ng-keydown="$event.keyCode == 13 && find()" flex>
+					<label>Entity Name or BID </label> 
+					<input ng-model="searchPage.search"/>
+				</md-input-container>
+				<md-button style="width:50px; height:20px; margin-left: 15px;" 
+					class="md-raised md-warn" ng-click="find()" 
+					ng-disabled="disableSearchButton" md-colors="!disableSearchButton ? {'background':'green'} : {}">
+					Search
+				</md-button>
+			</div>
+			<md-input-container class="md-block" style="margin-bottom:0" ng-if="request.processByCollection">
+				<textarea ng-model="request.bidOrNameCollections" rows="8" name="bidOrNameCollections" 
+					placeholder="Please input 'BID' or 'Entity Names', for separator you can use 'comma' or 'new line'">
+				</textarea>
+			</md-input-container>
+		</form>
+		
+		<div ng-if="!request.processByCollection">
+		
+			<md-card class="right-shadow">
+				<md-table-container>
+					<table md-table class="nobordertop headborderbottom"
+						md-row-select multiple ng-model="searchPage.selected">
+						<thead md-head md-order="searchPage.order" md-on-reorder="find">
+							<tr md-row>
+								<th md-column md-order-by="name">Name</th>
+								<th md-column md-order-by="businessID">BID</th>
+								<th md-column md-order-by="publicID">GUID</th>
+								<th md-column md-order-by="versionNumber">Version Number</th>
+								<th md-column md-order-by="workflowStatus">Workflow Status</th>
+							</tr>
+						</thead>
+						<tbody md-body>
+							<tr ng-hide="(searchPage.data).length">
+								<td colspan="5" md-row style="padding:24px;text-align:center">
+									No Data Available.
+								</td>
+							</tr>
+							<tr md-row ng-repeat="x in searchPage.data "
+								class="selectable" md-select="x" md-select-id="publicID" md-on-select="check" md-on-deselect="check" md-auto-select>
+								<td md-cell>{{x.name}}</td>
+								<td md-cell>{{x.businessID}}</td>
+								<td md-cell>{{x.publicID}}</td>
+								<td md-cell>{{x.versionNumber}}</td>
+								<td md-cell>{{x.workflowStatus}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</md-table-container>
+				<md-table-pagination md-limit="dataTable.pageSize" md-page="dataTable.pageNumber"
+					md-limit-options="[5,10,50]" md-on-paginate="find"
+					md-total="{{dataTable.totalElements}}" md-page-select>
+				</md-table-pagination>
+			</md-card>
+			
+			<div layout="row" style="margin-top:20px" flex>
+				<h5>Selected Entities <span style="color:red">*</span></h5>
+			</div>
+			<md-card class="right-shadow">
+				<md-table-container>
+					<table md-table class="nobordertop headborderbottom" md-row-select multiple ng-model="searchPage.selected">
+						<thead md-head>
+							<tr md-row>
+								<th md-column>Name</th>
+								<th md-column>BID</th>
+								<th md-column>GUID</th>
+								<th md-column>Version Number</th>
+								<th md-column>Workflow Status</th>
+							</tr>
+						</thead>
+						<tbody md-body>
+							<tr ng-hide="searchPage.selected.length">
+								<td colspan="5" md-row style="padding:24px;text-align:center">
+									No Data Available.
+								</td>
+							</tr>
+							<tr md-row ng-repeat="x in searchPage.selected | orderBy: 'name' | limitTo: searchPage.selected.length : (searchx.page - 1) * searchPage.selected.length"	
+								class="selectable" md-select="x" md-select-id="$index" md-on-select="check" md-on-deselect="check" md-auto-select>
+								<td md-cell>{{x.name}}</td>
+								<td md-cell>{{x.businessID}}</td>
+								<td md-cell>{{x.publicID}}</td>
+								<td md-cell>{{x.versionNumber}}</td>
+								<td md-cell>{{x.workflowStatus}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</md-table-container>
+				<md-table-pagination md-limit="searchPage.selected.length" md-page="searchx.page" md-total="{{searchPage.selected.length}}" md-page-select>
+				</md-table-pagination>
+			</md-card>
+			
+		</div>
+		
+		<div layout="row">
+			<md-button style="width:200px" class="md-raised md-warn" ng-click="clear()">Clear</md-button>
+			<div flex></div>
+			<md-button md-colors="!(formx.$invalid || !searchPage.selected.length || !teamOwner.selected.length || !systemsImpacted.selected.length || !servicesImpacted.selected.length || !stakeholdersImpacted.selected.length) ? {'background':'green'} : {}" 
+				style="width:200px" class="md-raised md-primary" ng-click="run()" ng-if="!request.processByCollection"
+				ng-disabled="formx.$invalid || !searchPage.selected.length || !teamOwner.selected.length || !systemsImpacted.selected.length || !servicesImpacted.selected.length || !stakeholdersImpacted.selected.length">Run</md-button>
+				
+			<md-button md-colors="!(formx.$invalid || !request.bidOrNameCollections || !teamOwner.selected.length || !systemsImpacted.selected.length || !servicesImpacted.selected.length || !stakeholdersImpacted.selected.length) ? {'background':'green'} : {}" 
+				style="width:200px" class="md-raised md-primary" ng-click="run()" ng-if="request.processByCollection"
+				ng-disabled="formx.$invalid || !teamOwner.selected.length || !systemsImpacted.selected.length || !servicesImpacted.selected.length || !stakeholdersImpacted.selected.length || !request.bidOrNameCollections">Run</md-button>
+		</div>
+	</div>
+</md-content>

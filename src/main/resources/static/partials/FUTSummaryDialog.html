@@ -1,0 +1,82 @@
+<md-dialog aria-label="Policy" style="max-height:85%; padding:16px">
+	<form>
+		<md-dialog-content style="width:600px;" layout="column" ng-if="!model.operationType">
+			<div layout="row" flex>
+				<div style="font-size:xx-large; margin-bottom: 20px;" layout-align="center center"
+					 layout="row" md-colors="{'color':'blue'}" flex>
+					Order Validation Summary
+				</div>
+				<md-button class="md-icon-button" ng-click="cancel()"><md-icon style="font-size: 2em;">close</md-icon></md-button>
+			</div>
+
+			<div layout="column" layout-align="center center" style="font-size:large; margin-bottom: 20px;">
+				<md-toolbar layout="row" layout-margin="" md-colors="{'background': 'blue-A200'}">
+			    	<div class="md-toolbar-tools">
+			        	<h2 flex md-truncate style="font-size: large; color: white;">Dataset Row</h2>
+			        	<md-button class="md-fab" style="background-color: white;" md-colors="{'color':'blue'}">
+			        		<span style="font-size: large; text-transform: none;">{{model.summary.totalRow}}</span>
+			          	</md-button>
+			        </div>
+				</md-toolbar>
+			    <md-toolbar layout="row" layout-margin="" md-colors="{'background': 'green'}">
+			    	<div class="md-toolbar-tools">
+			        	<h2 flex md-truncate style="font-size: large; color: white;">Eligible Row</h2>
+			        	<md-button class="md-fab" style="background-color: white;" md-colors="{'color':'green'}">
+			          		<span style="font-size: large; text-transform: none;">{{model.summary.totalEligible}}</span>
+			          	</md-button>
+			        </div>
+				</md-toolbar>
+			    <md-toolbar layout="row" layout-margin="" md-colors="{'background': 'red-A200'}">
+			    	<div class="md-toolbar-tools">
+			        	<h2 flex md-truncate style="font-size: large; color: white;">Not Eligible Row</h2>
+			        	<md-button class="md-fab" style="background-color: white;" md-colors="{'color':'red'}">
+			          		<span style="font-size: large; text-transform: none;">{{model.summary.totalNotEligible}}</span>
+			          	</md-button>
+			        </div>
+				</md-toolbar>
+			</div>
+		</md-dialog-content>
+
+		<md-dialog-content style="width:600px;" layout="column" ng-if="model.operationType">
+			<div layout="row" flex>
+				<div style="font-size:xx-large; margin-bottom: 20px;" layout-align="center center"
+					 layout="row" md-colors="{'color':'blue'}" flex>
+					Summary
+				</div>
+				<md-button class="md-icon-button" ng-click="cancel()"><md-icon style="font-size: 2em;">close</md-icon></md-button>
+			</div>
+
+			<div layout="column" layout-align="center center" style="font-size:large; margin-bottom: 20px;">
+				<md-toolbar layout="row" layout-margin="" md-colors="{'background': 'blue-A200'}">
+					<div class="md-toolbar-tools">
+						<h2 flex md-truncate style="font-size: large; color: white;">Total Row</h2>
+						<md-button class="md-fab" style="background-color: white;" md-colors="{'color':'blue'}">
+							<span style="font-size: large; text-transform: none;">{{model.summary.totalRow}}</span>
+						</md-button>
+					</div>
+				</md-toolbar>
+				<md-toolbar layout="row" layout-margin="" md-colors="{'background': 'green'}">
+					<div class="md-toolbar-tools">
+						<h2 flex md-truncate style="font-size: large; color: white;">Success Row</h2>
+						<md-button class="md-fab" style="background-color: white;" md-colors="{'color':'green'}">
+							<span style="font-size: large; text-transform: none;">{{model.summary.totalSuccessRow}}</span>
+						</md-button>
+					</div>
+				</md-toolbar>
+				<md-toolbar layout="row" layout-margin="" md-colors="{'background': 'red-A200'}">
+					<div class="md-toolbar-tools">
+						<h2 flex md-truncate style="font-size: large; color: white;">Failed Row</h2>
+						<md-button class="md-fab" style="background-color: white;" md-colors="{'color':'red'}">
+							<span style="font-size: large; text-transform: none;">{{model.summary.totalFailureRow}}</span>
+						</md-button>
+					</div>
+				</md-toolbar>
+			</div>
+		</md-dialog-content>
+
+		<md-dialog-actions layout="row" layout-align="center center" style="padding:0" ng-if="model.operationType">
+			<md-button ng-click="model.download(model.anchor)"
+					   flex="80" class="md-raised md-primary">Download</md-button>
+		</md-dialog-actions>
+	</form>
+</md-dialog>

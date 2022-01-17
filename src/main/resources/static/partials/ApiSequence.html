@@ -1,0 +1,128 @@
+<md-content class="md-padding general-background" layout="column">
+	<div class="md-padding">
+		<h2 style="color: white; margin-left: 10px;">API Sequence</h2>
+		<md-card md-whiteframe="4">
+
+			<md-toolbar class="md-table-toolbar md-default">
+				<div class="md-toolbar-tools" layout="row" flex>
+					<div layout="row">All Sequence</div>
+					<md-input-container md-no-float style="margin: 25px 0 0 20px;" flex>
+						<md-icon>search</md-icon>
+						<input ng-model="activity.search" type="text" placeholder="Enter Keyword" aria-label="Search" style="font-size: 0.7em;">
+					</md-input-container>
+					<div layout="row" layout-align="end center" style="font-size: 14px; cursor: pointer; outline: 0;" flex="10" ng-click="">
+						<span style="color: #2065ac;">Filters</span>
+						<md-icon style="margin: 0 10px;color: #2065ac;">filter_list</md-icon>
+					</div>
+					<div layout="row" layout-align="end center" style="font-size: 14px; cursor: pointer; outline: 0;" flex="15" ng-click="showFormNewSequence()">
+						<span style="color: #2065ac;">Add New Sequence</span>
+						<md-icon style="margin: 0 10px;color: #2065ac;">add_circle</md-icon>
+					</div>
+				</div>
+			</md-toolbar>
+
+			<md-table-container style="margin-bottom: 20px;">
+				<table md-table class="nobordertop headborderbottom">
+					<thead md-head>
+						<tr md-row>
+							<th md-column style="width: 100px; text-align: center;">SEQUENCE ID</th>
+							<th md-column md-order-by="name">SEQUENCE NAME</th>
+							<th md-column md-order-by="type">SEQUENCE DESCRIPTION</th>
+							<th md-column md-order-by="type">SEQUENCE API ENDPOINT ID</th>
+							<th md-column style="width: 100px; text-align: center;">ACTION</th>
+						</tr>
+					</thead>
+					<tbody md-body>
+					<tr ng-hide="apiSequences.length">
+						<td colspan="5" md-row style="padding:24px;text-align:center">
+							No Data Available.
+						</td>
+					</tr>
+					<tr md-row ng-if="newSequence">
+						<td md-cell>
+							<div layout="row" layout-align="center center">
+								<span></span>
+							</div>
+						</td>
+						<td md-cell>
+							<md-input-container layout="row" md-no-float style="margin: 0px; padding: 0px;">
+								<input name="sequenceName" ng-model="item.sequenceName" placeholder="Sequence Name" aria-label="sequenceName"/>
+							</md-input-container>
+						</td>
+						<td md-cell>
+							<md-input-container layout="row" md-no-float style="margin: 0px; padding: 0px;">
+								<input name="sequenceDesc" ng-model="item.sequenceDesc" placeholder="Sequence Description" aria-label="sequenceDesc"/>
+							</md-input-container>
+						</td>
+						<td md-cell style="padding: 0px;">
+							<div layout="column" flex>
+								<md-input-container layout="column" md-no-float style="margin: 0px; padding: 0px;" flex>
+									<label>Select API Endpoint</label>
+									<md-select aria-label="test" style="margin-top: 8px" ng-model="item.endpoints" md-on-close="clearSearchTerm()"
+											   md-selected-text="mdselectText" ng-change="change()" md-container-class="selectdemoSelectHeader" multiple>
+										<md-select-header style="padding-left: 16px; height: 48px; cursor: pointer; position: relative; display: flex; width: auto;">
+											<input ng-model="searchTerm" aria-label="Search Endpoints" type="search" ng-keydown="$event.stopPropagation()"
+												   placeholder="Search API Endpoint" style="border: none;outline: none;height: 100%;width: 100%;padding: 0;">
+										</md-select-header>
+										<md-option ng-repeat="endpoint in apiEndpoints track by endpoint.id" ng-click="selectEndpoint(endpoint)" ng-value="endpoint.id">{{ endpoint.id }} - {{ endpoint.apiName }}</md-option>
+									</md-select>
+								</md-input-container>
+							</div>
+						</td>
+						<td md-cell>
+							<div layout="row" layout-align="center center" style="font-size: 14px; cursor: pointer; outline: 0;">
+								<md-icon style="margin: 0 10px;color: #2065ac;" ng-click="cancelNew()">close</md-icon>
+								<md-icon style="margin: 0 10px;color: #2065ac;" ng-click="addNewSequence(item)">save</md-icon>
+							</div>
+						</td>
+					</tr>
+					<tr md-row ng-repeat="x in apiSequences | filter: activity.search" style="cursor: pointer;" ng-style="x.edited ? {'background-color': 'lightgrey'} : {}" ng-dblclick="editThisRow(x)">
+						<td md-cell>
+							<div layout="row" layout-align="center center">
+								{{ x.id }}
+							</div>
+						</td>
+						<td md-cell>
+							<span ng-if="!x.edited">{{ x.sequenceName }}</span>
+							<md-input-container md-no-float layout="row" style="margin: 0px; padding: 0px;" ng-if="x.edited">
+								<input name="sequenceName" ng-model="item.sequenceName" aria-label="sequenceName"/>
+							</md-input-container>
+						</td>
+						<td md-cell>
+							<span ng-if="!x.edited">{{ x.sequenceDesc }}</span>
+							<md-input-container md-no-float layout="row" style="margin: 0px; padding: 0px;" ng-if="x.edited">
+								<input name="sequenceDesc" ng-model="item.sequenceDesc" aria-label="sequenceDesc"/>
+							</md-input-container>
+						</td>
+						<td md-cell>
+							<span ng-if="!x.edited">{{ getRelation(x.sequences) }}</span>
+							<div layout="column" flex ng-if="x.edited">
+								<md-input-container layout="column" md-no-float style="margin: 0px; padding: 0px;" flex>
+									<label>Select API Endpoint</label>
+									<md-select aria-label="test" style="margin-top: 8px" ng-model="item.endpoints" md-on-close="clearSearchTerm()"
+											   md-selected-text="mdselectText" ng-change="change()" md-container-class="selectdemoSelectHeader" multiple>
+										<md-select-header style="padding-left: 16px; height: 48px; cursor: pointer; position: relative; display: flex; width: auto;">
+											<input ng-model="searchTerm" aria-label="Search Endpoints" type="search" ng-keydown="$event.stopPropagation()"
+												   placeholder="Select API Endpoint" style="border: none;outline: none;height: 100%;width: 100%;padding: 0;">
+										</md-select-header>
+										<md-option ng-repeat="endpoint in apiEndpoints track by endpoint.id" ng-click="selectEndpoint(endpoint)" ng-value="endpoint.id">{{ endpoint.id }} - {{ endpoint.apiName }}</md-option>
+									</md-select>
+								</md-input-container>
+							</div>
+						</td>
+						<td md-cell>
+							<div layout="row" layout-align="center center" style="font-size: 14px; cursor: pointer; outline: 0;">
+								<md-icon style="margin: 0 10px;color: #2065ac;" ng-if="!x.edited" ng-click="deleteApiSequence($event, x)">delete</md-icon>
+								<md-icon style="margin: 0 10px;color: #2065ac;" ng-if="x.edited" ng-click="cancelEdit(x)">close</md-icon>
+								<md-icon style="margin: 0 10px;color: #2065ac;" ng-if="x.edited" ng-click="saveEdit($event, item)">save</md-icon>
+							</div>
+						</td>
+					</tr>
+					</tbody>
+				</table>
+			</md-table-container>
+<!--			{{ item.endpoints }}-->
+<!--			{{ selectedList }}-->
+		</md-card>
+	</div>
+</md-content>

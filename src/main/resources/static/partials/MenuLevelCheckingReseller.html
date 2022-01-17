@@ -1,0 +1,208 @@
+<md-content class="md-padding general-background" layout="column">
+	<div class="md-padding">
+		<h2 style="color: white;">Browse Menu Level</h2>
+
+		<md-tabs class="tabs-simple md-no-ink-bar-color" md-dynamic-height>
+      		<md-tab style="text-transform: none;" label="Reseller">
+      			<div layout="row" flex>
+      				<div layout="column" flex>
+						<md-card layout="column" style="padding: 5px 30px 30px 30px; margin-top: 20px;" flex="nogrow">
+							<div  layout="column" flex>
+								<h4>Request</h4>
+								<form layout="column" name="menuLevelCheck" flex>
+									<div layout="row" flex>
+										<div layout="column" flex>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="35">
+													<span>Environment</span>
+												</div>
+												<md-radio-group ng-model="input.env" layout="row" style="font-size: 0.8em;" layout-align="start center" aria-labelledby="environment">
+													<md-radio-button value="Preprod" class="md-primary">Preprod</md-radio-button>
+													<md-radio-button value="Prod" class="md-primary">Prod</md-radio-button>
+												</md-radio-group>
+											</div>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="35"><span>Transaction ID<sup style="color:red; font-weight:bold;font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<input ng-model="input.transaction_id" style="margin-top: 8px" aria-label="transaction_id"/>
+												</md-input-container>
+											</div>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="35"><span>MSISDN A<sup style="color:red; font-weight:bold;font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<input name="msisdna" ng-pattern="regex.msisdn" ng-model="input.msisdna" style="margin-top: 8px;" aria-label="msisdna"/>
+													<div ng-messages="menuLevelCheck.msisdna.$error">
+														<div ng-message="pattern">Input not valid! Please input numeric.</div>
+													</div>
+												</md-input-container>
+											</div>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="35"><span>MSISDN B</span></div>
+												<md-input-container flex>
+													<input name="msisdnb" ng-pattern="regex.msisdn" ng-model="input.msisdnb" style="margin-top: 8px;" aria-label="msisdnb"/>
+													<div ng-messages="menuLevelCheck.msisdnb.$error">
+														<div ng-message="pattern">Input not valid! Please input numeric.</div>
+													</div>
+												</md-input-container>
+											</div>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="35"><span>Organization Code<sup style="color:red; font-weight:bold;font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<input name="orgCode" ng-pattern="regex.msisdn" ng-model="input.orgCode" style="margin-top: 8px" aria-label="organizationCode"/>
+													<div ng-messages="menuLevelCheck.orgCode.$error">
+														<div ng-message="pattern">Input not valid! Please input numeric.</div>
+													</div>
+												</md-input-container>
+											</div>
+										</div>
+										<md-divider style="margin: 20px 75px;"></md-divider>
+										<div layout="column" flex>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="35"><span>Channel<sup style="color:red; font-weight:bold; font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<md-select aria-label="test" style="margin-top: 8px" flex ng-model="input.channel" md-on-close="clearSearchTerm()" md-container-class="selectdemoSelectHeader">
+														<md-select-header class="demo-select-header">
+															<input ng-model="searchTerm" aria-label="Channel filter" type="search" ng-keydown="$event.stopPropagation()"
+																   placeholder="Ex. DigiPos" class="demo-header-searchbox md-text">
+														</md-select-header>
+														<md-option ng-repeat="channel in channels | filter:searchTerm track by channel.key" ng-value="channel.key" >
+															{{ channel.key }} - {{ channel.name }}
+														</md-option>
+													</md-select>
+												</md-input-container>
+											</div>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="35"><span>Payment Method<sup style="color:red; font-weight:bold;font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<md-select aria-label="test" style="margin-top: 8px" flex ng-model="input.paymentMethod" md-on-close="clearSearchTerm()" md-container-class="selectdemoSelectHeader">
+														<md-select-header class="demo-select-header">
+															<input ng-model="searchTerm" aria-label="Payment Method filter" type="search" ng-keydown="$event.stopPropagation()"
+																   placeholder="Ex. BALANCE" class="demo-header-searchbox md-text">
+														</md-select-header>
+														<md-option ng-repeat="paymentMethod in paymentMethods | filter:searchTerm track by paymentMethod" ng-value="paymentMethod" >
+															{{ paymentMethod }}
+														</md-option>
+													</md-select>
+												</md-input-container>
+											</div>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="35"><span>Menu Level<sup style="color:red; font-weight:bold;font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<input ng-model="input.menuLevel" style="margin-top: 8px" aria-label="menu level"/>
+												</md-input-container>
+											</div>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="35"><span>Location</span></div>
+												<md-input-container flex>
+													<input ng-model="input.kabupaten" style="margin-top: 8px" aria-label="kabupaten"/>
+												</md-input-container>
+											</div>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="35">
+													<span>Version</span>
+												</div>
+												<md-radio-group ng-model="input.version" layout="row" style="font-size: 0.8em;" layout-align="start center" aria-labelledby="version">
+													<md-radio-button value="1" class="md-primary">VAS Product Browse</md-radio-button>
+													<md-radio-button value="2" class="md-primary">Inject Physical Voucher</md-radio-button>
+													<md-radio-button value="3" class="md-primary">ARP & AP</md-radio-button>
+												</md-radio-group>
+											</div>
+										</div>
+									</div>
+
+									<div layout="row">
+										<div layout="column" layout-align="start none">
+											<span style="color:red; font-weight: bold">*Required</span>
+											<span style="color:red; font-weight: bold">*Location value must be Uppercase</span>
+										</div>
+										<div layout="row" layout-align="end end" flex>
+											<md-button class="md-raised" style="color:#2065ac; background-color: white; text-transform: none; font-size: 0.8em;" ng-click="resetInput()">Clear</md-button>
+											<div flex="3"></div>
+											<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;" ng-disabled="disableCheckButton();"
+													   ng-style="menuLevelCheck.$valid && !disableCheckButton() ? {'color': 'white', 'background-color': '#2065ac'} :  {'background':'silver', 'color':'white'}" ng-click="checkMenuLevel()">
+												Check
+											</md-button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</md-card>
+						<md-card layout="column" style="padding: 5px 30px 30px 30px;" flex ng-if="showReview">
+							<h4>Result</h4>
+							<md-toolbar class="md-table-toolbar md-default">
+								<div class="md-toolbar-tools" layout="row" flex>
+									<md-input-container md-no-float style="margin: 25px 10px 0 -25px;" flex>
+										<md-icon>search</md-icon>
+										<input ng-model="filter.search" type="text" placeholder="Enter Search Keyword" aria-label="Search" style="font-size: 0.8em; text-align: center;">
+									</md-input-container>
+									<md-button class="md-raised" style="text-transform: none; font-size: 0.8em; color: white; background-color: #2065ac;" ng-click="filter.search = ''">
+										Clear
+									</md-button>
+								</div>
+							</md-toolbar>
+							<md-tabs class="tabs-blue md-no-ink-bar-color" flex>
+								<md-tab style="text-transform: none;" label="Menu Review" flex>
+									<div layout="row" style="padding-top: 20px;" flex>
+										<md-tabs class="tabs-blue md-no-ink-bar-color" flex>
+											<md-tab>
+												<md-tab-label>{{ category }}</md-tab-label>
+												<md-tab-body>
+													<div layout="row" style="padding-top: 20px;" flex>
+														<div layout="column" flex="25" style="height: 500px; overflow-x: hidden; overflow-y: scroll;">
+															<md-button class="md-raised" ng-repeat="subc in subcategories" ng-style="subc === subCategory ? {'background-color':'#2065ac', 'color': 'white'} : {'color':'#2065ac', 'background-color': 'white'}"
+																	   style="text-transform: none; text-align: left; padding-left: 30px;" ng-click="changeProductFromMenuLevel(subc, result)">{{ subc }}
+															</md-button>
+														</div>
+														<md-card class="right-shadow" layout="column" flex style="height: 500px; overflow-x: hidden; overflow-y: scroll;">
+															<div layout="column" layout-align="start center" ng-show="filteredProduct.length">
+																<span>About <b>{{ (products | filter: filter.search).length }}</b> results.</span>
+															</div>
+															<div layout="column" layout-align="start center" ng-hide="filteredProduct.length">
+																<span>Product <b>{{ subCategory }}</b> with keyword '<i>{{ filter.search }}</i>' is not found.</span>
+															</div>
+															<md-card md-whiteframe="3" layout="row" layout-padding="10" ng-repeat="product in filteredProduct = (products | filter: filter.search)">
+																<div layout="column" layout-align="space-around none" flex>
+																	<div layout="row" layout-align="space-between none" flex="nogrow">
+																		<span flex>BID</span><span flex>{{ product.id }}</span>
+																	</div>
+																	<div layout="row" layout-align="space-between none" flex="nogrow">
+																		<span flex>Name</span> <span style="word-break: break-word;" flex>{{ product.name }}</span>
+																	</div>
+																	<div layout="row" layout-align="space-between none" flex="nogrow">
+																		<span flex>Price</span> <span style="font-weight: bold;color: red;" flex>{{ product.price | currency:"Rp":0 }}</span>
+																	</div>
+																	<div layout="row" layout-align="space-between none" flex="nogrow">
+																		<span flex>Active Period</span> <span flex>{{ product.product_length }}</span>
+																	</div>
+																</div>
+																<div layout="column" flex>
+																	<div flex="nogrow">
+																		<span style="font-weight: bold;">Allowance</span>
+																	</div>
+																	<div layout="row" layout-align="space-between none" flex="nogrow" style="padding: 5px 0px;" ng-repeat="bonus in product.bonus">
+																		<span style="word-break: break-word;" flex>{{ bonus.name }}</span> <span>{{ bonus.quota }} | {{ bonus.validity_period }}</span>
+																	</div>
+																</div>
+															</md-card>
+														</md-card>
+													</div>
+												</md-tab-body>
+											</md-tab>
+										</md-tabs>
+									</div>
+								</md-tab>
+								<md-tab style="text-transform: none;" label="Raw Response" flex>
+									<md-card layout="column" md-whiteframe="5" flex>
+										<div layout="column" style="overflow-y: scroll; overflow-x: auto; height: 500px;" layout-padding="5">
+											<pre>{{ result | json }}</pre>
+										</div>
+									</md-card>
+								</md-tab>
+							</md-tabs>
+						</md-card>
+      				</div>
+      			</div>
+      		</md-tab>
+      	</md-tabs>
+	</div>
+</md-content>

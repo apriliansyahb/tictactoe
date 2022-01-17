@@ -1,0 +1,50 @@
+<md-content class="md-padding general-background" layout="column">
+	<div class="md-padding">
+		<h2 style="color: white;">Get Subscriber Profile</h2>
+		<md-card layout="column" style="padding: 5px 30px 30px 30px;" flex>
+			<div layout="column" flex>
+				<h4 style="margin-bottom: 0px;">Download Subscriber Profile</h4>
+
+				<div layout="row" style="margin-top: 25px;" flex>
+					<div layout="row" layout-align="start center" flex="30">
+						<span>Environment</span>
+					</div>
+					<md-radio-group ng-model="request.env" layout="row" style="font-size: 0.8em;" layout-align="start center" aria-labelledby="environment">
+						<md-radio-button value="Preprod" class="md-primary">Preprod</md-radio-button>
+						<md-radio-button value="Prod" class="md-primary">Prod</md-radio-button>
+					</md-radio-group>
+				</div>
+
+				<div layout="row" flex>
+					<div layout="row" layout-align="start center" flex="30">
+						<span>Set Subscriber Profile Filename</span>
+					</div>
+					<md-input-container class="md-block" style="margin-bottom:0" flex>
+						<input ng-model="request.filename" aria-label="Set Subscriber Profile Filename"/>
+					</md-input-container>
+				</div>
+
+				<div layout="column">
+					<div layout="row">
+						<span style="margin: 5px 0px;">List of MSISDN<sup style="color:red;"> * required</sup></span>
+					</div>
+					<div layout="row" style="font-weight: 500; font-size: 0.6em;">
+						<span style="margin: 5px 0px; color: red;"><img src="img/ic_lightbulb_outline_24px.svg">&nbsp;&nbsp;Use comma (,) separator or new line</span>
+					</div>
+					<md-input-container class="md-block">
+						<textarea ng-model="request.msisdn" rows="6" placeholder="List of MSISDNs"></textarea>
+					</md-input-container>
+				</div>
+
+				<div layout="row" layout-align="end end" flex="20">
+					<md-button class="md-raised" style="color:#2065ac; background-color: white; text-transform: none; font-size: 0.8em;" ng-click="resetInput()">Clear</md-button>
+					<div flex="3"></div>
+					<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;" ng-disabled="!disableDownloadButton()"
+							   ng-style="!disableDownloadButton() ? {'background':'silver', 'color':'white'} : {'color': 'white', 'background-color': '#2065ac'}" ng-click="Download()">
+						Download
+					</md-button>
+				</div>
+			</div>
+		</md-card>
+	</div>
+</md-content>

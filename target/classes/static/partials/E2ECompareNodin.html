@@ -1,0 +1,351 @@
+<md-content class="md-padding general-background" layout="column">
+	<div class="md-padding">
+		<h2 style="color: white;">Compare Nodin vs Entity</h2>
+		<md-tabs class="tabs-simple md-no-ink-bar-color" md-dynamic-height>
+      		<md-tab style="text-transform: none;" label="Download Expected File">
+      			<div layout="row" flex>
+      				<div layout="column" flex="10">
+      					<md-card layout="column" style="padding-top: 20px;" flex>
+							<md-button class="md-raised" style="color: white; background-color: #2065ac; text-transform: none; font-size: 0.8em;" ng-click="">
+								<md-icon ng-if="previewExpected" style="color: white; background-color: #2065ac;">check_circle</md-icon>
+								Step 1
+							</md-button>
+							<div flex="20"></div>
+							<md-button class="md-raised" style="color: white; background-color: #2065ac; text-transform: none; font-size: 0.8em;" ng-click="">Step 2</md-button>
+							<div flex></div>
+      					</md-card>
+      				</div>
+      				<div flex="3"></div>
+      				<div layout="column" flex>
+						<!-- Card Step 1 -->
+      					<md-card layout="column" style="padding: 5px 30px 30px 30px;" flex ng-if="!previewExpected">
+      						<div  layout="column" style="color: #2065ac;" flex>
+      							<h3>Download Expected File Template</h3>
+      							<div layout="row" flex>
+									<div layout="row" layout-align="start center" flex="30" style="font-weight: 500; font-size: 0.8em;"><span style="color:red;">* </span>Entity Template Name</div>
+									<md-input-container flex>
+										<md-select placeholder="Template Name" ng-model="input.templateName" flex ng-change="searchEntity()">
+											<md-option ng-repeat="x in templates" value="{{x}}">{{x}}</md-option>
+										</md-select>
+									</md-input-container>
+								</div>
+								
+								<div layout="row" flex>
+									<div layout="row" layout-align="start center"  flex="30" style="font-weight: 500; font-size: 0.8em;">Set Expected Filename</div>
+									<md-input-container flex>
+										<input ng-model="input.fileName" aria-label="expected filename"/>
+									</md-input-container>
+								</div>
+								
+								<div layout="row" flex>
+									<div layout="row" layout-align="start center"  flex="30" style="font-weight: 500; font-size: 0.8em;">Parmeter Compared</div>
+									<md-input-container flex>
+										<md-select placeholder="Parameter" ng-model="input.parameter" multiple flex>
+											<md-option ng-repeat="x in catalogOperation" value="{{x}}">{{x}}</md-option>
+										</md-select>
+									</md-input-container>
+								</div>
+
+								<div layout="row" flex>
+									<div layout="row" style="font-weight: 500;margin-top: 15px;" layout-align="start center" flex="40">Select Entity</div>
+									<div layout="row" style="font-weight: 500;margin-top: 15px;" layout-align="start center" flex="60">Additional Operation</div>
+								</div>
+								
+								<div layout="row" style="font-size: 0.8em;" flex>
+									<div flex="40">
+										<md-checkbox class="md-primary" ng-model="input.exportByCollection">
+								        	Export by Collection
+								        </md-checkbox>
+								        <md-checkbox class="md-primary" ng-model="input.entityLiveVersion" ng-disabled="!input.templateName" ng-change="searchEntity()">
+								        	Entity Live Version
+								        </md-checkbox>
+									</div>
+									<div flex="55">
+										<md-checkbox class="md-primary" ng-model="input.expectedFilePerEntity">
+								        	Expected File per Entity
+								        </md-checkbox>
+								        <md-checkbox class="md-primary" ng-model="input.downloadXml">
+								        	Download XML
+								        </md-checkbox>
+								        <md-checkbox class="md-primary" ng-model="input.downloadExportEntityFile">
+								        	Download Export Entity File
+								        </md-checkbox>
+									</div>
+								</div>
+
+								<md-toolbar class="md-table-toolbar md-default">
+									<div class="md-toolbar-tools" layout="row" flex>
+										<md-input-container md-no-float style="margin: 25px 20px 0 0;" flex>
+											<md-icon>search</md-icon>
+											<input ng-model="search.search" type="text" placeholder="search" ng-disabled="!input.templateName" my-enter="searchEntity()" style="font-size: 0.8em;" aria-label="search">
+										</md-input-container>
+										<div layout="row" layout-align="center center" style="font-size: 14px; cursor: pointer; outline: 0;" flex="10" id="filter-button" ng-click="showFilterDialog($event)">
+											<span style="color: #2065ac;">Filters</span>
+											<md-icon style="margin: 0 10px;color: #2065ac;">filter_list</md-icon>
+										</div>
+									</div>
+								</md-toolbar>
+
+								<md-table-container>
+									<!-- Table Summary  -->
+									<table md-table class="nobordertop headborderbottom" md-row-select multiple ng-model="input.selected">
+										<thead md-head md-order="filter.inputSortBy" md-on-reorder="">
+											<tr md-row>
+												<th md-column md-order-by="name">Name</th>
+												<th md-column md-order-by="businessID">BID</th>
+												<th md-column md-order-by="publicID">GUID</th>
+												<th md-column md-order-by="versionNumber">Version</th>
+												<th md-column md-order-by="workflowStatus">Workflow Status</th>
+											</tr>
+										</thead>
+										<tbody md-body>
+											<tr ng-hide="(search.data | filter:search.search).length">
+												<td colspan="6" md-row style="padding:24px;text-align:center">
+													No Data Available.
+												</td>
+											</tr>
+											<tr md-row ng-repeat="x in search.data"
+												class="selectable" md-select="x" md-select-id="$index" md-on-select="checkRunButton" md-on-deselect="checkRunButton" md-auto-select>
+												<td md-cell>{{x.name}}</td>
+												<td md-cell>{{x.businessID}}</td>
+												<td md-cell>{{x.publicID}}</td>
+												<td md-cell>{{x.versionNumber}}</td>
+												<td md-cell>{{x.workflowStatus}}</td>
+											</tr>
+										</tbody>
+									</table>
+								</md-table-container>
+								<md-table-pagination md-limit="dataTable.pageSize" md-page="dataTable.pageNumber"
+													 md-limit-options="[5,10,50]" md-on-paginate="searchEntity"
+													 md-total="{{dataTable.totalElements}}" md-page-select>
+								</md-table-pagination>
+
+								<div layout="row" layout-align="end end" flex>
+									<md-button class="md-raised" style="color:#2065ac; background-color: white; text-transform: none; font-size: 0.8em;" ng-click="resetInput()">Clear</md-button>
+									<div flex="3"></div>
+									<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;" ng-disabled="isNextDisabled();"
+										ng-style="isNextDisabled() ? {'background':'silver', 'color':'white'} : {'color': 'white', 'background-color': '#2065ac'}" ng-click="previewExpectedInput()">
+											Next
+									</md-button>
+								</div>
+      						</div>
+      					</md-card>
+
+						<!-- Card Step 2 -->
+						<md-card layout="column" style="padding: 5px 30px 30px 30px; color: #2065ac;" ng-if="previewExpected">
+							<div layout="row">
+								<div flex><h3>Preview</h3></div>
+								<div flex="10"></div>
+								<div flex="35"><h3>Additional Operation</h3></div>
+							</div>
+							<div layout="row" flex>
+								<div layout="column" flex>
+									<div layout="row" flex>
+										<div layout="row" layout-align="start center" flex="30" style="font-weight: 500; font-size: 0.8em;">Entity Template Name</div>
+										<md-input-container flex>
+											<input ng-model="input.templateName" style="margin-top: -15px;" flex/>
+										</md-input-container>
+									</div>
+
+									<div layout="row" flex>
+										<div layout="row" layout-align="start center" flex="30" style="font-weight: 500; font-size: 0.8em;">Expected Filename</div>
+										<md-input-container flex>
+											<input ng-model="input.fileName" style="margin-top: -15px;" flex/>
+										</md-input-container>
+									</div>
+
+									<div layout="row" flex>
+										<div layout="row" layout-align="start center" flex="30" style="font-weight: 500; font-size: 0.8em;">Compared Parameter</div>
+										<md-input-container flex>
+											<input ng-model="input.parameter" style="margin-top: -15px;" flex/>
+										</md-input-container>
+									</div>
+
+									<div layout="row" flex>
+										<div layout="row" layout-align="start center" flex="30" style="font-weight: 500; font-size: 0.8em;">Selected Entity</div>
+										<div flex></div>
+									</div>
+								</div>
+
+								<div flex="5"></div>
+								<md-divider></md-divider>
+								<div flex="5"></div>
+
+								<div layout="column" flex="35">
+									<div layout="row" layout-align="start center" flex>
+										<md-button ng-if="input.expectedFilePerEntity">
+											<md-icon style="color: mediumseagreen;">check_circle</md-icon>
+										</md-button>
+										<md-button ng-if="!input.expectedFilePerEntity">
+											<md-icon style="color: red;">block</md-icon>
+										</md-button>
+										<div layout="row" layout-align="start center" flex style="font-weight: 500; font-size: 0.8em;">Expected File per Entity</div>
+									</div>
+									<div layout="row" flex>
+										<md-button ng-if="input.downloadXml">
+											<md-icon style="color: mediumseagreen;">check_circle</md-icon>
+										</md-button>
+										<md-button ng-if="!input.downloadXml">
+											<md-icon style="color: red;">block</md-icon>
+										</md-button>
+										<div layout="row" layout-align="start center" flex style="font-weight: 500; font-size: 0.8em;">Download XML</div>
+									</div>
+									<div layout="row" flex>
+										<md-button ng-if="input.downloadExportEntityFile">
+											<md-icon style="color: mediumseagreen;">check_circle</md-icon>
+										</md-button>
+										<md-button ng-if="!input.downloadExportEntityFile">
+											<md-icon style="color: red;">block</md-icon>
+										</md-button>
+										<div layout="row" layout-align="start center" flex style="font-weight: 500; font-size: 0.8em;">Download Export Entity File</div>
+									</div>
+								</div>
+							</div>
+
+							<md-table-container>
+								<!-- Table Summary  -->
+								<table md-table class="nobordertop headborderbottom">
+									<thead md-head md-order="filter.inputSortBy" md-on-reorder="">
+									<tr md-row>
+										<th md-column md-order-by="name">Name</th>
+										<th md-column md-order-by="businessID">BID</th>
+										<th md-column md-order-by="publicID">GUID</th>
+										<th md-column md-order-by="versionNumber">Version</th>
+										<th md-column md-order-by="workflowStatus">Workflow Status</th>
+									</tr>
+									</thead>
+									<tbody md-body>
+									<tr md-row ng-repeat="x in input.selected" class="selectable">
+										<td md-cell>{{x.name}}</td>
+										<td md-cell>{{x.businessID}}</td>
+										<td md-cell>{{x.publicID}}</td>
+										<td md-cell>{{x.versionNumber}}</td>
+										<td md-cell>{{x.workflowStatus}}</td>
+									</tr>
+									</tbody>
+								</table>
+							</md-table-container>
+<!--							<md-table-pagination md-limit="dataTable.pageSize" md-page="dataTable.pageNumber"-->
+<!--												 md-limit-options="[5,10,50]" md-on-paginate="findEntity"-->
+<!--												 md-total="{{dataTable.totalElements}}" md-page-select>-->
+<!--							</md-table-pagination>-->
+
+							<div layout="row" layout-align="end end" flex>
+								<md-button class="md-raised" style="color:#2065ac; background-color: white; text-transform: none; font-size: 0.8em;" ng-click="cancel();">Cancel</md-button>
+								<div flex="3"></div>
+								<md-button class="md-raised" style="color: white; background-color: #2065ac; text-transform: none; font-size: 0.8em;" ng-click="goBack();">Previous</md-button>
+								<div flex="3"></div>
+								<md-button class="md-raised" style="color: white; background-color: #2065ac; text-transform: none; font-size: 0.8em;" ng-click="generatePreFilledExpectedTemplate()">Download</md-button>
+							</div>
+
+						</md-card>
+      				</div>
+      			</div>
+      		</md-tab>
+      		<md-tab style="text-transform: none;" label="Compare">
+				<div layout="row" flex>
+					<div layout="column" flex="10">
+						<md-card layout="column" style="padding-top: 20px;" flex>
+							<md-button class="md-raised" style="color: white; background-color: #2065ac; text-transform: none; font-size: 0.8em;" ng-click="">
+								<md-icon ng-if="previewCompare" style="color: white; background-color: #2065ac;">check_circle</md-icon>
+								Step 1</md-button>
+							<div flex="40"></div>
+							<md-button class="md-raised" style="color: white; background-color: #2065ac; text-transform: none; font-size: 0.8em;" ng-click="">Step 2</md-button>
+						</md-card>
+					</div>
+					<div flex="3"></div>
+					<div layout="column" flex>
+						<!-- Card Step 1 -->
+						<md-card layout="column" style="padding: 5px 30px 30px 30px;" flex ng-hide="previewCompare">
+							<div  layout="column" style="color: #2065ac;" flex>
+								<h3>Compare Parameter</h3>
+								<div layout="row" flex>
+									<div layout="row" layout-align="start center" flex="30" style="font-weight: 500; font-size: 0.8em;"><span style="color:red;">* </span>Upload Expected File</div>
+									<file-upload flex layout="row" ng-model="compareInput.expectedFile" ng-change="checkExpectedFile();" placeholder="" style="margin-top: -10px;"></file-upload>
+									<md-icon>open_in_browser</md-icon>
+								</div>
+
+								<div layout="row" flex>
+									<div layout="row" layout-align="start center"  flex="30" style="font-weight: 500; font-size: 0.8em;">Set Summary Result Filename</div>
+									<md-input-container flex>
+										<input ng-model="compareInput.summaryFilename" aria-label="expected filename" style="margin-top: -10px;"/>
+									</md-input-container>
+								</div>
+
+								<div layout="row" style="font-weight: 500;margin-top: 15px;" layout-align="start center" flex>Additional Operation</div>
+
+								<div layout="row" style="font-size: 0.8em;" flex>
+									<div flex="40">
+										<md-checkbox class="md-primary" ng-model="compareInput.summaryFilePerEntity">
+											Summary File per Entity
+										</md-checkbox>
+									</div>
+								</div>
+
+								<div layout="row" layout-align="end end" flex>
+									<md-button class="md-raised" style="color:#2065ac; background-color: white; text-transform: none; font-size: 0.8em;" ng-click="resetCompareInput()">Clear</md-button>
+									<div flex="3"></div>
+									<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;" ng-disabled="compareInput.expectedFile == null"
+											   ng-style="compareInput.expectedFile == null ? {'background':'silver', 'color':'white'} : {'color': 'white', 'background-color': '#2065ac'}" ng-click="previewCompareInput()">
+										Next
+									</md-button>
+								</div>
+							</div>
+						</md-card>
+
+						<!-- Card Step 2 -->
+						<md-card layout="column" style="padding: 5px 30px 30px 30px;" ng-hide="!previewCompare">
+							<div layout="row">
+								<div flex><h3>Preview</h3></div>
+								<div flex="10"></div>
+								<div flex="35"><h3>Additional Operation</h3></div>
+							</div>
+							<div layout="row" flex>
+								<div layout="column" flex>
+									<div layout="row" flex>
+										<div layout="row" layout-align="start center" flex="30" style="font-weight: 500; font-size: 0.8em;">Upload Expected File</div>
+										<md-input-container flex>
+											<input ng-model="compareInput.expectedFile.name" aria-label="upload expected file" style="margin-top: -15px;" flex/>
+										</md-input-container>
+									</div>
+
+									<div layout="row" flex>
+										<div layout="row" layout-align="start center" flex="30" style="font-weight: 500; font-size: 0.8em;">Summary Result Filename</div>
+										<md-input-container flex>
+											<input ng-model="compareInput.summaryFilename" aria-label="summary filename" style="margin-top: -15px;" flex/>
+										</md-input-container>
+									</div>
+								</div>
+
+								<div flex="5"></div>
+								<md-divider></md-divider>
+								<div flex="5"></div>
+
+								<div layout="column" flex="35">
+									<div layout="row" layout-align="start center" flex>
+										<md-button ng-if="compareInput.summaryFilePerEntity">
+											<md-icon style="color: mediumseagreen;">check_circle</md-icon>
+										</md-button>
+										<md-button ng-if="!compareInput.summaryFilePerEntity">
+											<md-icon style="color: red;">block</md-icon>
+										</md-button>
+										<div layout="row" layout-align="start center" flex style="font-weight: 500; font-size: 0.8em;">Summary File per Entity</div>
+									</div>
+								</div>
+							</div>
+
+							<div layout="row" layout-align="end end" flex>
+								<md-button class="md-raised" style="color:#2065ac; background-color: white; text-transform: none; font-size: 0.8em;" ng-click="cancelCompare();">Cancel</md-button>
+								<div flex="3"></div>
+								<md-button class="md-raised" style="color: white; background-color: #2065ac; text-transform: none; font-size: 0.8em;" ng-click="goBackCompare();">Previous</md-button>
+								<div flex="3"></div>
+								<md-button class="md-raised" style="color: white; background-color: #2065ac; text-transform: none; font-size: 0.8em;" ng-click="compareNodin();">Download</md-button>
+							</div>
+
+						</md-card>
+					</div>
+				</div>
+			</md-tab>
+      	</md-tabs>
+	</div>
+</md-content>

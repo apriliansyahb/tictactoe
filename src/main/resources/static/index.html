@@ -1,55 +1,223 @@
 <!doctype html>
 <html>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="REM">
+<meta http-equiv="Cache-Control"
+	content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 <head>
 <title>Tic Tac Toe</title>
-
-<link rel="icon" type="img/ico" href="favicon.ico">
+<link rel="icon" type="img/ico" href="img/mt.ico">
 <link rel="stylesheet" href="libs/css/icon.css" />
 <link rel="stylesheet" href="libs/css/css.css" />
 <link rel="stylesheet" href="libs/css/angular-material.min.css" />
+<link rel="stylesheet" href="libs/css/material-datetimepicker.min.css">
 <link rel="stylesheet" href="libs/css/nv.d3.min.css">
 <link rel="stylesheet" href="libs/css/md-data-table.min.css">
-<link rel="stylesheet" href="libs/css/vis.min.css">
+<link rel="stylesheet" href="libs/css/angular-material-sidemenu.css">
+<link rel="stylesheet" href="libs/css/handsontable.full.min.css">
+<!--		<link rel="stylesheet" href="libs/css/ui-grid.min.css">-->
+<link rel="stylesheet" href="libs/css/toaster.min.css">
 <link rel="stylesheet" href="css/css.css" />
-</head>
-<meta charset="utf-8">
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular.min.js"></script> -->
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js"></script> -->
-
+<script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-resource.js"></script>
 </head>
 <body>
 	<h1>Tic Tac Toe</h1>
-	<div ng-app="ticTacToeApp" ng-controller="BoardCtrl" ng-cloak
-		class="demo" layout="row">
-		<md-content flex layout="column">
-		<div style="height: 64px" hide-gt-lg></div>
-		<div flex ng-view></div>
-		</md-content>
+	<div ng-app="myApp" ng-controller="myCtrl">
+		<md-content class="md-padding" layout="column" layout-fill>
+		<div layout="column">
+			<div layout="column" layout-align="center center">
+				<!-- https://docs.angularjs.org/api/ng/directive/ngIf -->
+				<div ng-if="!game.concluded">Player Turn : {{game.player}}</div>
+				<div ng-if="game.concluded && game.winner!='draw'">Winner is :
+					{{game.winner}}</div>
+				<div ng-if="game.concluded && game.winner=='draw'">Draw</div>
+			</div>
+		</div>
+		<div layout="column" layout-align="center center">
+			<div layout="row">
+				<md-slider-container> <span
+					style="min-width: 100px">Board Size</span> <md-slider min="3"
+					max="11" step="2" ng-model="boardSize" class="md-primary">
+				</md-slider> <span style="margin-left: 16px">{{boardSize}}x{{boardSize}}</span>
+				</md-slider-container>
+			</div>
+			<md-button class="md-raised md-primary" ng-click="start()">Start
+			Game</md-button>
+		</div>
+		<div layout="column" layout-align="center center">
+			<span style="min-width: 100px">clicked board coord</span>
+			<md-button class="md-raised md-primary">{{x}}</md-button>
+			<md-button class="md-raised md-primary">{{y}}</md-button>
+		</div>
+		<!-- https://stackoverflow.com/questions/47241512/how-to-loop-based-on-button-click-using-ng-repeat -->
+		<div layout="row" ng-repeat="x in game.board.xcoord"
+			layout-align="center center">
+			<md-button ng-repeat="y in x track by $index"
+				style="width:100px; height:100px" class="md-raised"
+				ng-click="move($parent.$index, $index)"> {{y}} </md-button>
+		</div>
+		<div>{{game}}</div>
 	</div>
-	<script src="libs/js/jquery.min.js"></script>
-	<script src="libs/js/angular.min.js"></script>
-	<script src="libs/js/angular-animate.min.js"></script>
-	<script src="libs/js/angular-aria.min.js"></script>
-	<script src="libs/js/angular-messages.min.js"></script>
-	<script src="libs/js/angular-route.min.js"></script>
-	<script src="libs/js/angular-resource.min.js"></script>
-	<script src="libs/js/angular-sanitize.js"></script>
+	<script type="text/javascript">
+		var myService = angular.module("myService", [ 'ngResource' ]);
+
+		function createResource($resource, url, method, isArray) {
+			return $resource("." + url, {}, {
+				execute : {
+					method : method,
+					params : {},
+					isArray : isArray,
+				// 		            headers : {
+				// 		                "token" : localStorage.remtoken,
+				// 		                "username" : localStorage.remusername,
+				// 		                "uid" : localStorage.remuid
+				// 		            }
+				}
+			});
+		}
+
+		myService.factory('tictactoeService', [
+				'$resource',
+				function($resource) {
+					return {
+						startGame : function() {
+							return createResource($resource, "/main/start",
+									"POST", false);
+						},
+						move : function() {
+							return createResource($resource, "/main/move",
+									"PUT", false);
+						},
+						board : function() {
+							return createResource($resource, "/main/board",
+									"GET", false);
+						}
+					};
+				} ]);
+
+		var myController = angular.module("myController", []);
+
+		myController.controller('myCtrl', [
+				'$scope',
+				'$mdDialog',
+				'tictactoeService',
+				'$interval',
+				function($scope, $mdDialog, tictactoeService, $interval) {
+					$scope.boardSize = 3;
+
+					//call service endpoint on /main/board
+					//update $game from response
+					function get() {
+						execute($scope, $mdDialog, true, tictactoeService
+								.board(), {}, function(result) {
+							$scope.game = result;
+						});
+					}
+
+					$scope.start = function() {
+						//call service endpoint on /main/start with param $boardsize
+						//update $game from response
+						// 						$scope.game = {
+						// 							"board" : {
+						// 								"xCoord" : [ [ "X", "O", "X" ], [ "", "", "" ],
+						// 										[ "", "", "" ] ]
+						// 							},
+						// 							"boardSize" : 3,
+						// 							"player" : "X",
+						// 							"concluded" : false,
+						// 							"winner" : null
+						// 						}
+						execute($scope, $mdDialog, true, tictactoeService
+								.startGame(), {
+							boardSize : $scope.boardSize
+						}, function(result) {
+							$scope.game = result;
+						});
+
+					}
+
+					$scope.move = function(x, y) {
+						if (!$scope.game.concluded) {
+							execute($scope, $mdDialog, true, tictactoeService
+									.move(), {
+								x : x,
+								y : y
+							}, function(result) {
+								$scope.game = result;
+							})
+						}
+						;
+					}
+
+					// 					get();
+
+					// 					logout : function () {
+					//                     return createResource($resource, "/mt-login/logout", "POST",
+					//                             false);
+					//                 	}
+					// 					$scope.logout = function (ev) {
+					// 						var confirm = $mdDialog.confirm().title("").textContent(
+					// 						"Logout from this application?").ariaLabel('Logout')
+					// 						.targetEvent(ev).ok('Logout').cancel('Cancel');
+
+					// 						$mdDialog.show(confirm).then(function () {
+
+					// 							execute($scope, $mdDialog, true, service.logout(), {
+					// 								token : localStorage.remtoken,
+					// 								userName : localStorage.remusername
+					// 							}, function (result) {
+					// 								logout();
+					// 							});
+					// 						});
+					// 					};
+
+					get();
+				} ]);
+
+		var myApp = angular.module(
+				"myApp",
+				[ 'ngAnimate', 'ngMaterial', 'ngRoute', 'myService',
+						'myController' ]).config(function() {
+
+		});
+	</script>
+	<script src="libs/js/jquery-3.4.0.min.js"></script>
+	<script src="libs/js/latest/angular.min.js"></script>
+	<script src="libs/js/Chart.min.js"></script>
+	<script src="libs/js/chartjs-plugin-datalabels.min.js"></script>
+	<script src="libs/js/angular-chart.min.js"></script>
+	<script src="libs/js/latest/angular-animate.min.js"></script>
+	<script src="libs/js/latest/angular-aria.min.js"></script>
+	<script src="libs/js/latest/angular-messages.min.js"></script>
+	<script src="libs/js/latest/angular-route.min.js"></script>
+	<script src="libs/js/latest/angular-resource.min.js"></script>
+	<script src="libs/js/latest/angular-sanitize.min.js"></script>
 	<script src="libs/js/angular-material.min.js"></script>
 	<script src="libs/js/d3.min.js"></script>
 	<script src="libs/js/nv.d3.min.js"></script>
 	<script src="libs/js/angular-nvd3.min.js"></script>
-	<script src="libs/js/moment.min.js"></script>
+	<script src="libs/js/moment-2.11.2.min.js"></script>
+	<script src="libs/js/angular-material-datetimepicker.min.js"></script>
 	<script src="libs/js/md-data-table.min.js"></script>
 	<script src="libs/js/perfect-scrollbar.jquery.min.js"></script>
 	<script src="libs/js/md5.js"></script>
 	<script src="libs/js/angular-material-sidemenu.js"></script>
-	<script src="libs/js/neovis.js"></script>
-	<script src="libs/js/vis.min.js"></script>
-
-	<script src="js/app.js"></script>
+	<!--		<script src="libs/js/ui-grid.min.js"></script>-->
+	<script src="libs/js/xlsx.full.min.js"></script>
+	<script src="libs/js/handsontable.full.min.js"></script>
+	<script src="libs/js/ngHandsontable.js"></script>
+	<script src="libs/js/ng-file-upload.min.js"></script>
+	<script src="libs/js/html2pdf.bundle.min.js"></script>
+	<script src="libs/js/sockjs.min.js"></script>
+	<script src="libs/js/stomp.min.js"></script>
+	<script src="libs/js/toaster.min.js"></script>
 	<script src="js/util.js"></script>
-	<script src="js/controllers.js"></script>
-	<script src="js/config.js"></script>
-	<script src="js/services.js"></script>
 </body>
 </html>

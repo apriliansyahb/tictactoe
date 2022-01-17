@@ -1,28 +1,24 @@
-var ticTacToeApp = angular.module('ticTacToeApp', [ 'nvd3', 'ngAria', 'ngMessages',
-        'ngAnimate', 'ngMaterial', 'ngRoute', 'haControllers', 'haServices',
-        'ngMaterialDatePicker', 'md.data.table', 'ngSanitize',
-        'ngMaterialSidemenu' ]);
+var TicTacToeApp = angular.module('TicTacToeApp', [ 'ngAnimate', 'ngMaterial',
+		'ngRoute', 'tripleTController', 'tripleTService', ]);
 
-ticTacToeApp.config([
-    '$routeProvider',
-    '$mdThemingProvider',
-    function ($routeProvider, $mdThemingProvider) {
-        $mdThemingProvider.theme('default');
+TicTacToeApp.config([ '$routeProvider', '$mdThemingProvider',
+		function($routeProvider, $mdThemingProvider) {
+			$mdThemingProvider.theme('default');
 
-        $routeProvider.when('/board', {
-            templateUrl : 'board.html',
-            controller : 'BoardCtrl'
-        }).otherwise({
-            redirectTo : '/board'
-        });
-    } ]);
+			$routeProvider.when('/board', {
+				templateUrl : 'board.html',
+				controller : 'BoardCtrl'
+			}).otherwise({
+				redirectTo : '/board'
+			});
+		} ]);
 
-ticTacToeApp.filter("toArray", function () {
-    return function (obj) {
-        var result = [];
-        angular.forEach(obj, function (val, key) {
-            result.push(val);
-        });
-        return result;
-    };
+TicTacToeApp.filter("toArray", function() {
+	return function(obj) {
+		var result = [];
+		angular.forEach(obj, function(val, key) {
+			result.push(val);
+		});
+		return result;
+	};
 });

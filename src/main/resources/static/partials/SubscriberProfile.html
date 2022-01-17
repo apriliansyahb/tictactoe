@@ -1,0 +1,206 @@
+<md-content class="md-padding general-background" layout="column">
+	<div class="md-padding">
+		<h2 style="color: white;">Subscriber Profile</h2>
+		<md-card layout="column" style="padding: 30px;" flex>
+			<div layout="column" flex ng-if="stage == 'input'">
+
+				<div layout="row" style="margin-bottom: 20px;" flex>
+					<div layout="row" layout-align="start center" flex="30">
+						<span><b>Configurations</b></span>
+					</div>
+					<div layout="row" layout-align="start center" flex>
+<!--						<md-checkbox class="md-primary" layout-align="start center" style="font-size: 0.8em;"-->
+<!--									 ng-model="isGetSubsByFile" flex>-->
+<!--							Get Subscriber Profile from File-->
+<!--						</md-checkbox>-->
+						<md-radio-group ng-model="isGetSubsByFile" layout="row" style="font-size: 0.8em;" layout-align="start center" aria-labelledby="configurations">
+							<md-radio-button ng-value="{{false}}" class="md-primary">Get Subscriber Profile from API</md-radio-button>
+							<md-radio-button ng-value="{{true}}" class="md-primary">Get Subscriber Profile from File</md-radio-button>
+						</md-radio-group>
+					</div>
+				</div>
+
+				<div layout="row" style="margin-bottom: 20px;" flex ng-if="!isGetSubsByFile">
+					<div layout="row" layout-align="start center" flex="30">
+						<span>Environment</span>
+					</div>
+					<md-radio-group ng-model="request.env" layout="row" style="font-size: 0.8em;" layout-align="start center" aria-labelledby="environment">
+						<md-radio-button value="Preprod" class="md-primary">Preprod</md-radio-button>
+						<md-radio-button value="Prod" class="md-primary">Prod</md-radio-button>
+					</md-radio-group>
+				</div>
+
+				<div layout="row" style="margin-bottom: 20px;" flex ng-if="isGetSubsByFile">
+					<div layout="row" layout-align="start center" flex="30"><span>Subscriber Profile</span></div>
+					<div layout="row" layout-align="start center" flex>
+						<input type="file" ngf-select="SelectFile($file)" flex/>
+					</div>
+				</div>
+
+				<div layout="row" style="margin-bottom: 20px;" flex ng-if="!isGetSubsByFile">
+					<div layout="column" flex="30">
+						<div layout="row">
+							<span style="margin: 5px 0px;">List of MSISDN</span>
+						</div>
+						<div layout="row" style="font-weight: 500; font-size: 0.6em;">
+							<span style="margin: 5px 0px; color: red;"><img src="img/ic_lightbulb_outline_24px.svg">&nbsp;&nbsp;Use comma (,) separator or new line</span>
+						</div>
+					</div>
+					<md-input-container md-no-float flex>
+						<textarea ng-model="request.msisdn" rows="6" placeholder="Ex. 6281000000001, 6281000000001"
+								  style="padding: 10px; border-width: 3px; margin-top: -20px;">
+						</textarea>
+					</md-input-container>
+				</div>
+
+				<div layout="row" layout-align="end end" flex ng-if="SubscriberProfiles.length === 0">
+					<md-button class="md-raised" style="color:#2065ac; background-color: white; text-transform: none; font-size: 0.8em;" ng-click="resetInput()">Cancel</md-button>
+					<div flex="3"></div>
+					<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;" ng-disabled="(!isFileSelected() && !request.msisdn)"
+							   ng-style="(isFileSelected() || request.msisdn) ? {'color': 'white', 'background-color': '#2065ac'} : {'background':'silver', 'color':'white'}" ng-click="Submit()">
+						Submit
+					</md-button>
+				</div>
+			</div>
+			<!-- Preview of File Submitted or Get Result -->
+			<div layout="column" ng-if="stage == 'preview'">
+				<div layout="row" style="margin-top: -18px; margin-bottom: 10px;" flex>
+					<h3 flex>Subscriber Profile Editor</h3>
+					<md-button class="md-raised" style="text-transform: none; font-size: 0.8em; background-color: #2065ac; color: white;" ng-click="showDownloadDialog($event)">Export List to Excel File&nbsp;
+						<md-icon md-svg-src="img/xlsx-file.svg" style="color: white;" aria-label="file-xlsx"></md-icon>
+					</md-button>
+				</div>
+				<hot-table settings="settings"
+						   row-headers="true"
+						   min-spare-rows="minSpareRows"
+						   datarows="SubscriberProfiles"
+						   height="320"
+						   style="margin-bottom: 10px;">
+
+<!--					<hot-column data="Msisdn" title="'Msisdn'" type="grayedOut"></hot-column>-->
+<!--					<hot-column data="LOCATION" title="'LOCATION'" type="grayedOut"></hot-column>-->
+<!--					<hot-column data="BRAND" title="'BRAND'" type="grayedOut"></hot-column>-->
+<!--					<hot-column data="BALANCE" title="'BALANCE'" type="grayedOut"></hot-column>-->
+<!--					<hot-column data="ARPU" title="'ARPU'" type="grayedOut"></hot-column>-->
+<!--					<hot-column data="PRICEPLAN" title="'PRICE PLAN'" type="grayedOut"></hot-column>-->
+<!--					<hot-column data="LOS" title="'LOS'" type="grayedOut"></hot-column>-->
+				</hot-table>
+				<span style="color: red;"><sup>*</sup>Upload only avaiable to Preprod Environment</span>
+				<span style="color: red;"><sup>*</sup>Field Brand and Location is string based and case sensitive</span>
+				<span style="color: red;"><sup>*</sup>Location Value must be Uppercase</span>
+				<span style="color: red;"><sup>*</sup>All Value couldn’t have space before and after value</span>
+				<div layout="row" layout-align="end end" flex="20">
+					<md-button class="md-raised" style="color:#2065ac; background-color: white; text-transform: none; font-size: 0.8em;" ng-click="resetInput()">Cancel</md-button>
+					<div flex="3"></div>
+					<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;"
+							   ng-style="{'color': 'white', 'background-color': '#2065ac'}" ng-click="UploadSubsProfile()">
+						Submit
+					</md-button>
+				</div>
+			</div>
+
+			<!-- Submit File or Get Msisdn Result -->
+			<div layout="column" flex ng-if="stage == 'result'">
+				<div layout="column">
+					<div layout="row">
+						<h3 flex>Upload Result</h3>
+						<div layout="row" layout-align="end center" flex>
+							<md-button style="color:#2065ac; background-color: white; text-transform: none; font-size: 0.8em;" ng-click="resetInput()">
+								Upload Subscriber Profile&emsp;<md-icon style="color:#2065ac;">open_in_browser</md-icon>
+							</md-button>
+						</div>
+					</div>
+					<span>Subscriber Profiles updated!</span>
+				</div>
+
+				<div layout="row">
+					<md-card class="md-padding" md-whiteframe="4" layout="column" layout-margin="1" flex="20">
+						<div layout="row" layout-align="center center">
+							<span style="font-size: 1.8em; color: red;">5</span>
+							<span>/</span>
+							<span>20</span>
+						</div>
+						<div layout="row" layout-align="center center">
+							Failed Row
+						</div>
+					</md-card>
+					<md-card class="md-padding" md-whiteframe="4" layout="column" layout-margin="1" flex="20">
+						<div layout="row" layout-align="center center">
+							<span style="font-size: 1.8em; color: mediumseagreen">15</span>
+						</div>
+						<div layout="row" layout-align="center center">
+							Success Row
+						</div>
+					</md-card>
+				</div>
+
+				<md-tabs class="tabs-blue md-no-ink-bar-color" flex>
+					<md-tab style="text-transform: none;" label="Success Row" flex>
+						<div layout="column" style="margin-top: 20px;">
+							<hot-table settings="settings"
+									   col-headers="Headers"
+									   row-headers="true"
+									   min-spare-rows="minSpareRows"
+									   datarows="SubscriberProfiles"
+									   height="420">
+								<hot-column data="Msisdn" title="'Msisdn'" type="grayedOut" read-only></hot-column>
+								<hot-column data="LOCATION" title="'LOCATION'" type="grayedOut" read-only></hot-column>
+								<hot-column data="BRAND" title="'BRAND'" type="grayedOut" read-only></hot-column>
+								<hot-column data="BALANCE" title="'BALANCE'" type="grayedOut" read-only></hot-column>
+								<hot-column data="ARPU" title="'ARPU'" type="grayedOut" read-only></hot-column>
+								<hot-column data="PRICEPLAN" title="'PRICE PLAN'" type="grayedOut" read-only></hot-column>
+								<hot-column data="LOS" title="'LOS'" type="grayedOut" read-only></hot-column>
+							</hot-table>
+						</div>
+					</md-tab>
+					<md-tab style="text-transform: none;" label="Failed Row" flex>
+						<div layout="column" style="margin-top: 20px;">
+							<hot-table settings="settings"
+									   col-headers="Headers"
+									   row-headers="true"
+									   min-spare-rows="minSpareRows"
+									   datarows="result.failed"
+									   height="320">
+								<hot-column data="Msisdn" title="'Msisdn'" type="grayedOut" read-only></hot-column>
+								<hot-column data="LOCATION" title="'LOCATION'" type="grayedOut" read-only></hot-column>
+								<hot-column data="BRAND" title="'BRAND'" type="grayedOut" read-only></hot-column>
+								<hot-column data="BALANCE" title="'BALANCE'" className="'htRight'" type="grayedOut" read-only></hot-column>
+								<hot-column data="ARPU" title="'ARPU'" type="grayedOut" read-only></hot-column>
+								<hot-column data="PRICEPLAN" title="'PRICE PLAN'" type="grayedOut" read-only></hot-column>
+								<hot-column data="LOS" title="'LOS'" type="grayedOut" read-only></hot-column>
+							</hot-table>
+						</div>
+					</md-tab>
+				</md-tabs>
+			</div>
+		</md-card>
+	</div>
+</md-content>
+<div style="visibility: hidden">
+	<div class="md-dialog-container" id="dialog-download">
+		<md-dialog layout-padding style="width: 40%;">
+			<md-toolbar style="background-color: #2065ac;">
+				<div class="md-toolbar-tools">
+					<h2>Download MSISDN List</h2>
+				</div>
+			</md-toolbar>
+			<form name="formDestination" style="margin: 20px;" layout="column">
+				<div layout="row">
+					<div layout="row" flex>
+						<md-input-container class="md-block" style="margin-bottom:0px; margin-right: 20px;" md-no-float flex>
+							<label>Set Filename</label>
+							<md-icon class="material-icons" style="color: #2065ac">create</md-icon>
+							<input type="text" name="name" ng-model="item.name" aria-label="name"/>
+						</md-input-container>
+					</div>
+				</div>
+				<div layout="row" layout-align="end end" style="margin-top:16px">
+					<md-button class="md-raised" style="color: #2065ac; text-transform: none; font-size: 0.8em;" ng-click="cancelCreate(formDestination)">Cancel</md-button>
+					<div flex="5"></div>
+					<md-button class="md-raised" ng-style="{'color': 'white', 'background-color': '#2065ac'}"
+							   style="text-transform: none; font-size: 0.8em;" ng-click="downloadSubscriberProfile(item.name); cancelCreate(formDestination);">Download</md-button>
+				</div>
+			</form>
+		</md-dialog>
+	</div>
+</div>

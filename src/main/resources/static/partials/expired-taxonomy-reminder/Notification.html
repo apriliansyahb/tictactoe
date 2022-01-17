@@ -1,0 +1,144 @@
+<md-content class="md-padding general-background" layout="column">
+	<div class="md-padding">
+		<h2 style="color: white; margin-left: 10px;">Notification</h2>
+		<md-card md-whiteframe="4" style="border-radius: 10px;">
+			<h3 style="margin-left: 24px;"><span ng-click="removeDetail()" ng-style="detail.type ? {'color': '#2065ac', 'cursor': 'pointer'} : {'color': 'black'}">
+				All Notification</span> {{ detail.type ? '/ ' + (detail.dateSent | date:'yyyyMMdd') + ' - ' + detail.status : '' }}</h3>
+			<md-toolbar class="md-table-toolbar md-default">
+				<div class="md-toolbar-tools" layout="row" style="padding-right: 0px;" flex>
+					<md-input-container layout-align="center center" md-no-float style="margin: 0px; padding-right: 24px;" flex>
+						<md-icon style="margin-top: 20px;">search</md-icon>
+						<input ng-model="activity.search" type="text" placeholder="DATETIME SENT, NAME, TOTAL, etc"
+							   aria-label="Search" style="font-size: 0.8em; margin-top: 20px;">
+					</md-input-container>
+					<md-button style="text-transform: none" flex="10" ng-disabled="!search.selected.length" ng-click="downloadNotification()"
+							   ng-style="search.selected.length ? {'color': '#2065ac', 'background-color': 'white'} : {'color': 'white', 'background-color': 'lightgrey'}">
+						Download
+						<md-icon style="margin: 0 5px;" ng-style="search.selected.length ? {'color': '#2065ac', 'background-color': 'white'} : {'color': 'white', 'background-color': 'lightgrey'}">system_update_alt</md-icon>
+					</md-button>
+<!--					<div layout="row" layout-align="center center" style="font-size: 14px; outline: 0;" flex="10" ng-click="downloadNotification()"-->
+<!--						 ng-style="search.selected.length ? {'cursor': 'pointer', 'background-color' : 'white'} : {'background-color': 'grey'}">-->
+<!--						<span style="color: #2065ac;">Download</span>-->
+<!--						<md-icon style="margin: 0 10px;color: #2065ac;">system_update_alt</md-icon>-->
+<!--					</div>-->
+					<div layout="row" layout-align="center center" style="font-size: 14px; cursor: pointer; outline: 0;" flex="10" ng-click="">
+						<span style="color: #2065ac;">Filters</span>
+						<md-icon style="margin: 0 10px;color: #2065ac;">filter_list</md-icon>
+					</div>
+				</div>
+			</md-toolbar>
+
+			<md-table-container style="margin-bottom: 20px;" ng-show="!detail.type">
+				<table md-table class="nobordertop headborderbottom" md-row-select multiple ng-model="search.selected">
+					<thead md-head md-order="activity.inputSortBy">
+						<tr md-row>
+							<th md-column md-order-by="dateSent">DATETIME SENT</th>
+							<th md-column md-order-by="name">NAME</th>
+							<th md-column md-order-by="totalExpiringTaxo" style="text-align: left; width: 150px; padding: 0px 28px;">TOTAL BID<br>WILL BE EXPIRED</th>
+							<th md-column md-order-by="totalExpiringMl" style="text-align: left; width: 150px; padding: 0px 28px;">TOTAL MENU LEVEL<br>WILL BE EXPIRED</th>
+							<th md-column md-order-by="totalExpiredTaxo" style="text-align: left; width: 150px; padding: 0px 28px;">TOTAL EXPIRED<br>BID</th>
+							<th md-column md-order-by="totalExpiredMl" style="text-align: left; width: 150px; padding: 0px 28px;">TOTAL EXPIRED<br>MENU LEVEL</th>
+							<th md-column style="text-align: center; width: 50px">ACTION</th>
+						</tr>
+					</thead>
+					<tbody md-body>
+						<tr ng-hide="search.data.length">
+							<td colspan="7" md-row style="padding:24px;text-align:center">
+								No Data Available.
+							</td>
+						</tr>
+						<tr md-row ng-repeat="x in search.data | orderBy: activity.inputSortBy | filter: activity.search" class="selectable" md-select="x">
+							<td md-cell>{{ x.dateSent | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+							<td md-cell>{{ x.name }}</td>
+							<td md-cell style="text-align: left; padding: 0px 28px; color: #2065ac; font-weight: bold;" ng-click="showDetailBidExpiring(x)">{{ x.totalExpiringTaxo }}</td>
+							<td md-cell style="text-align: left; padding: 0px 28px; color: #2065ac; font-weight: bold;" ng-click="showDetailMenuLevelExpiring(x)">{{ x.totalExpiringMl }}</td>
+							<td md-cell style="text-align: left; padding: 0px 28px; color: #2065ac; font-weight: bold;" ng-click="showDetailBidExpired(x)">{{ x.totalExpiredTaxo }}</td>
+							<td md-cell style="text-align: left; padding: 0px 28px; color: #2065ac; font-weight: bold;" ng-click="showDetailMenuLevelExpired(x)">{{ x.totalExpiredMl }}</td>
+							<td md-cell style="text-align: center">
+								<md-button class="md-icon-button" ng-click="downloadNotificationReportAttachment(x)">
+									<md-tooltip md-direction="bottom">Download Attachment</md-tooltip>
+									<md-icon style="color: #2065ac;">move_to_inbox</md-icon>
+								</md-button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</md-table-container>
+
+			<!-- Detail Notification BID-->
+			<md-table-container style="margin-bottom: 20px;" ng-if="detail.type === 'bid'">
+				<table md-table class="nobordertop headborderbottom" md-row-select multiple ng-model="search.selected">
+					<thead md-head md-order="activity.inputOrderBy">
+						<tr md-row>
+							<th md-column md-order-by="bid">BID</th>
+							<th md-column md-order-by="classType">CLASSTYPE</th>
+							<th md-column md-order-by="catalogProductName">CATALOG PRODUCT NAME</th>
+							<th md-column md-order-by="availableEndDate">END DATE</th>
+							<th md-column md-order-by="remainingDays">REMAINING DAYS</th>
+						</tr>
+					</thead>
+					<tbody md-body>
+						<tr ng-hide="detail.data.length">
+							<td colspan="5" md-row style="padding:24px;text-align:center">
+								No Data Available.
+							</td>
+						</tr>
+	<!--					<tr md-row ng-repeat="x in search.data | filter: activity.search" class="selectable" md-select="x">-->
+						<tr md-row ng-repeat="x in detail.data | orderBy: activity.inputOrderBy | filter: activity.search | limitTo: detail.limit : ((detail.pageNumber - 1) * detail.limit)"
+							class="selectable" md-select="x" md-auto-select>
+							<td md-cell>{{ x.bid }}</td>
+							<td md-cell>{{ x.classType }}</td>
+							<td md-cell>{{ x.catalogProductName }}</td>
+							<td md-cell>{{ x.availableEndDate }}</td>
+							<td md-cell>{{ x.remainingDays }}</td>
+						</tr>
+					</tbody>
+				</table>
+			</md-table-container>
+
+			<!-- Detail Notification Menu Level-->
+			<md-table-container style="margin-bottom: 20px;" ng-if="detail.type === 'ml'">
+				<table md-table class="nobordertop headborderbottom" md-row-select multiple ng-model="search.selected">
+					<thead md-head md-order="activity.inputOrderBy">
+						<tr md-row>
+							<th md-column md-order-by="bid">BID</th>
+							<th md-column md-order-by="classType">CLASSTYPE</th>
+							<th md-column md-order-by="catalogProductName">CATALOG PRODUCT NAME</th>
+							<th md-column md-order-by="menuLevelId">MENU LEVEL ID</th>
+							<th md-column md-order-by="tree">MENU TREE</th>
+							<th md-column md-order-by="availableEndDate">END DATE</th>
+							<th md-column md-order-by="remainingDays">REMAINING DAYS</th>
+						</tr>
+					</thead>
+					<tbody md-body>
+						<tr ng-hide="detail.data.length">
+							<td colspan="7" md-row style="padding:24px;text-align:center">
+								No Data Available.
+							</td>
+						</tr>
+						<tr md-row ng-repeat="x in detail.data | orderBy: activity.inputOrderBy | filter: activity.search | limitTo: detail.limit : ((detail.pageNumber - 1) * detail.limit)"
+							class="selectable" md-select="x" md-auto-select>
+							<td md-cell>{{ x.bid }}</td>
+							<td md-cell>{{ x.classType }}</td>
+							<td md-cell>{{ x.catalogProductName }}</td>
+							<td md-cell>{{ x.menuLevelId }}</td>
+							<td md-cell>{{ x.tree }}</td>
+							<td md-cell>{{ x.availableEndDate }}</td>
+							<td md-cell>{{ x.remainingDays }}</td>
+						</tr>
+					</tbody>
+				</table>
+			</md-table-container>
+
+			<md-table-pagination md-limit="detail.limit" md-page="detail.pageNumber"
+								 md-limit-options="[10,25,50,100,200,500]" md-on-paginate=""
+								 md-total="{{ detail.totalElements }}" md-page-select ng-show="detail.type">
+			</md-table-pagination>
+
+			<md-table-pagination md-limit="dataTable.limit" md-page="dataTable.pageable.pageNumber"
+								 md-limit-options="[5,10,25,50,100,200,500]" md-on-paginate="findAllNotificationReport"
+								 md-total="{{ dataTable.totalElements }}" md-page-select ng-show="!detail.type">
+			</md-table-pagination>
+		</md-card>
+	</div>
+</md-content>

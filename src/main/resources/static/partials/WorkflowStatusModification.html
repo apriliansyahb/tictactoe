@@ -1,0 +1,154 @@
+<md-content class="md-padding" layout="column">
+	<div class="md-padding">
+		<h2>Workflow Operation - {{subtitle}}</h2>
+		
+		<md-card-content>
+			<div layout="row" style="margin-top:15px" flex>
+				<h5>Configurations</h5>
+			</div>
+			<md-card class="right-shadow" style="padding-left: 10px; margin-bottom: 20px">
+	          <div layout="row" layout-wrap flex>
+	            <div flex="100">
+	            	<md-checkbox ng-click="clickExportByCollection()" ng-model="filter.exportByCollection">
+	                	Process By Collections
+	            	</md-checkbox>
+	            </div>
+	          </div>
+	        </md-card>
+			<div layout="row" style="margin-top:15px" flex>
+				<h5>Filter</h5>
+			</div>
+			<md-card class="right-shadow" style="padding-left: 10px; margin-bottom: 20px" layout="column">
+				<div layout="row">
+					<md-input-container class="md-block" style="margin-right: 30px" ng-if="true" flex>
+						<label>Template Name</label> 
+						<md-select ng-model="filter.templateName" ng-change="checkFindEntityButton()" >
+							<md-option ng-repeat="x in templates" value="{{x}}">
+						    		{{x}}
+						    </md-option>
+					 	</md-select>
+					</md-input-container>
+					<md-input-container class="md-block" style="margin-right: 30px" flex ng-if="!filter.exportByCollection">
+						<label>Workflow Status</label> 
+						<md-select ng-model="filter.workflowStatus" ng-change="checkFindEntityButton(); checkRunButton()" multiple>
+							<md-option ng-repeat="x in allowedWorkflowStatuses" value="{{x}}">
+						    		{{x}}
+						    </md-option>
+					 	</md-select>
+					</md-input-container>
+				</div>
+				<md-input-container class="md-block" style="margin-bottom:0" ng-if="filter.exportByCollection">
+					<textarea ng-model="filter.bidOrNameCollections" rows="8" name="bidOrNameCollections" ng-change="checkRunButton(); checkGetUserButton();" 
+					placeholder="Please input 'BID' or 'Entity Names', for separator you can use 'comma' or 'new line'"></textarea>
+				</md-input-container>
+				
+				<div layout="row" style="margin-bottom:15px" ng-if="!filter.exportByCollection">
+					<div flex></div>
+					<md-button style="width:200px; margin-right: 30px" md-colors="!ui.disableFindEntityButton ? {'background':'green'} : {}" class="md-raised md-primary" ng-click="findEntity()"
+						ng-disabled="ui.disableFindEntityButton">Search</md-button>
+				</div>
+			</md-card>
+		</md-card-content>
+		
+		<md-card class="right-shadow" ng-if="!filter.exportByCollection">
+		
+			<md-input-container class="md-block" style="margin-bottom:0" ng-if="true">
+				<label>Search </label> 
+				<md-icon class="material-icons">search</md-icon>
+				<input ng-model="search.search"/>
+			</md-input-container>
+		
+			<md-table-container>
+				<table md-table class="nobordertop headborderbottom"
+					md-row-select multiple ng-model="search.selected">
+					<thead md-head md-order="search.order">
+						<tr md-row>
+							<th md-column md-order-by="name">Name</th>
+							<th md-column md-order-by="businessID">BID</th>
+							<th md-column md-order-by="publicID">GUID</th>
+							<th md-column md-order-by="publicID">Workflow Status</th>
+						</tr>
+					</thead>
+					<tbody md-body>
+						<tr ng-hide="(search.data | filter:search.search).length">
+							<td colspan="5" md-row style="padding:24px;text-align:center">
+								No Data Available.
+							</td>
+						</tr>
+						<tr md-row ng-repeat="x in search.data | orderBy: search.order | filter: search.search | limitTo: search.limit : (search.page - 1) * search.limit"
+							class="selectable" md-select="x" md-select-id="$index" md-on-select="checkRunButton" md-on-deselect="checkRunButton" md-auto-select>
+							<td md-cell>{{x.name}}</td>
+							<td md-cell>{{x.businessID}}</td>
+							<td md-cell>{{x.publicID}}</td>
+							<td md-cell>{{x.workflowStatus}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</md-table-container>
+			<md-table-pagination md-limit="search.limit" md-page="search.page"
+				md-limit-options="[5,10,50]"
+				md-total="{{(search.data | filter:search.search).length}}" md-page-select>
+			</md-table-pagination>
+		</md-card>
+		
+		<div layout="row" style="margin-top:20px" flex ng-if="!filter.exportByCollection">
+			<h5>Selected Entities <span style="color:red">*</span></h5>
+		</div>
+		<md-card class="right-shadow" ng-if="!filter.exportByCollection">
+			<md-table-container>
+				<table md-table class="nobordertop headborderbottom" md-row-select multiple ng-model="search.selected">
+					<thead md-head>
+						<tr md-row>
+							<th md-column md-order-by="name">Name</th>
+							<th md-column md-order-by="businessID">BID</th>
+							<th md-column md-order-by="publicID">GUID</th>
+							<th md-column md-order-by="publicID">Workflow Status</th>
+						</tr>
+					</thead>
+					<tbody md-body>
+						<tr ng-hide="search.selected.length">
+							<td colspan="5" md-row style="padding:24px;text-align:center">
+								No Data Available.
+							</td>
+						</tr>
+						<tr md-row ng-repeat="x in search.selected | orderBy: 'name' | limitTo: search.selected.length : (searchx.page - 1) * search.selected.length"	
+							class="selectable" md-select="x" md-select-id="$index" md-on-select="checkRunButton" md-on-deselect="checkRunButton" md-auto-select>
+							<td md-cell>{{x.name}}</td>
+							<td md-cell>{{x.businessID}}</td>
+							<td md-cell>{{x.publicID}}</td>
+							<td md-cell>{{x.workflowStatus}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</md-table-container>
+			<md-table-pagination md-limit="search.selected.length" md-page="searchx.page" md-total="{{search.selected.length}}" md-page-select>
+			</md-table-pagination>
+		</md-card>
+		
+		<div layout="row" ng-if="(subtitle == 'SubmitApproval' || subtitle == 'SubmitStaging') && filter.exportByCollection">
+			<div flex></div>
+			<md-button style="width:200px;" md-colors="!ui.disableGetUserButton ? {'background':'green'} : {}" class="md-raised" ng-click="getUserApproverByCollection()"
+						ng-disabled="ui.disableGetUserButton">Get User</md-button>
+		</div>
+		
+		<div layout="row" ng-if="subtitle == 'SubmitApproval' || subtitle == 'SubmitStaging'" flex>
+			<h5>Select Users <span style="color:red">*</span></h5>
+		</div>
+		
+		<md-input-container class="md-block" style="margin-right: 30px" ng-if="subtitle == 'SubmitApproval' || subtitle == 'SubmitStaging'" flex>
+			<label>Display Name</label> 
+			<md-select ng-model="filter.displayName" multiple>
+				<md-option ng-repeat="x in users" value="{{x.securityID}}">
+					{{x.displayName}}
+				</md-option>
+			</md-select>
+		</md-input-container>
+		
+		<div layout="row">
+			<md-button style="width:200px" class="md-raised md-warn" ng-click="clear()">Clear</md-button>
+			<div flex></div>
+			<md-button style="width:200px" md-colors="!ui.disableRunButton ? {'background':'green'} : {}" class="md-raised md-primary" ng-click="run()"
+				ng-disabled="ui.disableRunButton">Run</md-button>
+		</div>
+	</div>
+</md-content>

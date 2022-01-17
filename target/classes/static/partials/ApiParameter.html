@@ -1,0 +1,101 @@
+<md-content class="md-padding general-background" layout="column">
+	<div class="md-padding">
+		<h2 style="color: white; margin-left: 10px;">API Parameter</h2>
+		<md-card md-whiteframe="4">
+			<md-toolbar class="md-table-toolbar md-default">
+				<div class="md-toolbar-tools" layout="row" flex>
+					<div layout="row">All Parameter</div>
+					<md-input-container md-no-float style="margin: 25px 0 0 20px;" flex>
+						<md-icon>search</md-icon>
+						<input ng-model="activity.search" type="text" placeholder="Enter Keyword" aria-label="Search" style="font-size: 0.7em;">
+					</md-input-container>
+					<div layout="row" layout-align="end center" style="font-size: 14px; cursor: pointer; outline: 0;" flex="10" ng-click="">
+						<span style="color: #2065ac;">Filters</span>
+						<md-icon style="margin: 0 10px;color: #2065ac;">filter_list</md-icon>
+					</div>
+					<div layout="row" layout-align="end center" style="font-size: 14px; cursor: pointer; outline: 0;" flex="15" ng-click="showFormNewParameter()">
+						<span style="color: #2065ac;">Add New Parameter</span>
+						<md-icon style="margin: 0 10px;color: #2065ac;">add_circle</md-icon>
+					</div>
+				</div>
+			</md-toolbar>
+
+			<md-table-container style="margin-bottom: 20px;">
+				<table md-table class="nobordertop headborderbottom">
+					<thead md-head>
+						<tr md-row>
+							<th md-column style="width: 100px; text-align: center;">PARAMETER ID</th>
+							<th md-column>PARAMETER NAME</th>
+							<th md-column>PARAMETER TYPE</th>
+							<th md-column style="width: 120px; text-align: center;">ACTION</th>
+						</tr>
+					</thead>
+					<tbody md-body>
+					<tr ng-hide="apiParameters.length">
+						<td colspan="8" md-row style="padding:24px;text-align:center">
+							No Data Available.
+						</td>
+					</tr>
+					<tr md-row ng-if="newParameter">
+						<td md-cell>
+							<div layout="row" layout-align="center center">
+								<span></span>
+							</div>
+						</td>
+						<td md-cell>
+							<md-input-container layout="row" md-no-float style="margin: 0px; padding: 0px;">
+								<input name="paramName" ng-model="item.paramName" placeholder="Param Name" aria-label="paramName"/>
+							</md-input-container>
+						</td>
+						<td md-cell>
+							<md-input-container layout="row" layout-align="start center" md-no-float style="margin: 0px; padding: 0px;">
+								<md-select name="paramType" ng-model="item.paramType" aria-label="paramType">
+									<md-option ng-repeat="param in paramTypes" ng-value="param.value">
+										{{ param.name }}
+									</md-option>
+								</md-select>
+							</md-input-container>
+						</td>
+						<td md-cell>
+							<div layout="row" layout-align="center center" style="font-size: 14px; cursor: pointer; outline: 0;">
+								<md-icon style="margin: 0 10px;color: #2065ac;" ng-click="cancelNew()">close</md-icon>
+								<md-icon style="margin: 0 10px;color: #2065ac;" ng-click="addNewParameter(item)">save</md-icon>
+							</div>
+						</td>
+					</tr>
+					<tr md-row ng-repeat="x in apiParameters | filter: activity.search" style="cursor: pointer;" ng-style="x.edited ? {'background-color': 'lightgrey'} : {}" ng-dblclick="editThisRow(x)">
+						<td md-cell>
+							<div layout="row" layout-align="center center">
+								<span>{{x.id}}</span>
+							</div>
+						</td>
+						<td md-cell>
+							<span ng-if="!x.edited">{{ x.paramName }}</span>
+							<md-input-container md-no-float layout="row" style="margin: 0px; padding: 0px;" ng-if="x.edited">
+								<input name="paramName" ng-model="item.paramName" aria-label="paramName"/>
+							</md-input-container>
+						</td>
+						<td md-cell>
+							<span ng-if="!x.edited">{{ x.paramType }}</span>
+							<md-input-container layout="row" md-no-float layout-align="start center" style="margin: 0px; padding: 0px;" ng-if="x.edited">
+								<md-select name="paramType" ng-model="item.paramType" aria-label="paramType">
+									<md-option ng-repeat="param in paramTypes" ng-value="param.value">
+										{{ param.name }}
+									</md-option>
+								</md-select>
+							</md-input-container>
+						</td>
+						<td md-cell>
+							<div layout="row" layout-align="center center" style="font-size: 14px; cursor: pointer; outline: 0;">
+								<md-icon style="margin: 0 10px;color: #2065ac;" ng-if="!x.edited" ng-click="deleteApiParam($event, x)">delete</md-icon>
+								<md-icon style="margin: 0 10px;color: #2065ac;" ng-if="x.edited" ng-click="cancelEdit(x)">close</md-icon>
+								<md-icon style="margin: 0 10px;color: #2065ac;" ng-if="x.edited" ng-click="saveEdit($event, item)">save</md-icon>
+							</div>
+						</td>
+					</tr>
+					</tbody>
+				</table>
+			</md-table-container>
+		</md-card>
+	</div>
+</md-content>

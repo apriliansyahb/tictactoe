@@ -1,0 +1,63 @@
+<md-content class="md-padding" layout="row" layout-align="center" flex style="background-color:#fff">
+	<div layout="column" flex layout-align="center" style="margin-top: 80px">
+		
+		<div style="font-size: 70px; color: rgba(112,112,112,1); text-align: center;">EPC Tools Services</div>
+		
+		<div ng-if="permissions.length === 0" layout="row" layout-align="center" style="margin-top: 135px; justify-content: space-evenly;">
+			Sorry, You dont have privilege to access any EPC Tools Service
+		</div>
+		
+		<div ng-if="permissions.length" layout="row" layout-align="center"  style="margin-top: 135px; justify-content: space-evenly;">
+			<div ng-if="buttonAllowed.e2e" style="font-weight: bold; font-size: 50px; cursor: pointer;" ng-click="toLogin('masstool_e2e')">
+				<svg width="318" height="172" class="Rectangle_1_n">
+					<linearGradient id="Rectangle_1_n" spreadMethod="pad" x1="0.5" x2="0.5" y1="0" y2="1">
+						<stop offset="0" stop-color="#f70" stop-opacity="1"></stop>
+						<stop offset="1" stop-color="#fff" stop-opacity="1"></stop>
+					</linearGradient>
+					<rect x="0" y="0" rx="35" ry="35" width="318" height="172" fill="url(#Rectangle_1_n)" id="Rectangle_1_n"/>
+					<text fill="#ffffff" font-size="30" x="47" y="80">E2E Testing Tool</text>
+					Sorry, your browser does not support inline SVG.
+				</svg>
+			</div>
+			<div ng-if="buttonAllowed.masstool" style="font-weight: bold; font-size: 50px; cursor: pointer;" ng-click="toLogin('masstool')">
+				<svg width="318" height="172" class="Rectangle_2_p">
+					<linearGradient id="Rectangle_2_p" spreadMethod="pad" x1="0.5" x2="0.5" y1="0" y2="1">
+						<stop offset="0" stop-color="#f00" stop-opacity="1"></stop>
+						<stop offset="1" stop-color="#fff" stop-opacity="1"></stop>
+					</linearGradient>
+					<rect x="0" y="0" rx="35" ry="35" width="318" height="172" fill="url(#Rectangle_2_p)" id="Rectangle_2_p"/>
+					<text fill="#ffffff" font-size="30" x="90" y="80">Mass Tool</text>
+					  Sorry, your browser does not support inline SVG.
+				</svg>
+			</div>
+			<div ng-if="buttonAllowed.etl" style="font-weight: bold; font-size: 50px; cursor: pointer;" ng-click="toLogin('masstool_etl')">
+				<svg width="318" height="172" class="Rectangle_3_r">
+					<linearGradient id="Rectangle_3_r" spreadMethod="pad" x1="0.5" x2="0.5" y1="0" y2="1">
+						<stop offset="0" stop-color="#0090ff" stop-opacity="1"></stop>
+						<stop offset="1" stop-color="#fff" stop-opacity="1"></stop>
+					</linearGradient>
+					<rect x="0" y="0" rx="35" ry="35" width="318" height="172" fill="url(#Rectangle_3_r)" id="Rectangle_3_r"/>
+					<text fill="#ffffff" font-size="30" x="101" y="80">ETL Tool</text>
+					  Sorry, your browser does not support inline SVG.
+				</svg>
+			</div>
+			<div ng-if="buttonAllowed.exp_taxo" style="font-weight: bold; font-size: 50px; cursor: pointer;" ng-click="toLogin('exp-taxo')">
+				<svg width="318" height="172" class="Rectangle_4_s">
+					<linearGradient id="Rectangle_4_s" spreadMethod="pad" x1="0.5" x2="0.5" y1="0" y2="1">
+						<stop offset="0" stop-color="#008000" stop-opacity="1"></stop>
+						<stop offset="1" stop-color="#fff" stop-opacity="1"></stop>
+					</linearGradient>
+					<rect x="0" y="0" rx="35" ry="35" width="318" height="172" fill="url(#Rectangle_4_s)" id="Rectangle_4_s"/>
+					<text fill="#ffffff" font-size="30" x="110" y="55">Expired</text>
+					<text fill="#ffffff" font-size="30" x="90" y="85">Taxonomy</text>
+					<text fill="#ffffff" font-size="30" x="93" y="115">Reminder</text>
+					Sorry, your browser does not support inline SVG.
+				</svg>
+			</div>
+		</div>
+	</div>
+</md-content>
+<div style="position: absolute; left: 30px; bottom: 20px;">
+	<svg ng-click="logout()" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="rgba(112,112,112,1)" width="36px" height="36px"><path d="M0 0h24v24H0z" fill="none"/><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>
+	<!-- <span>Log Out</span> -->
+</div>

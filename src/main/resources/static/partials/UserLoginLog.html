@@ -1,0 +1,137 @@
+<md-content class="md-padding" layout="column">
+	<div class="md-padding">
+		<h2>User Login Log</h2>
+		
+		<md-card-content>
+			
+			<div layout="row" style="margin-top:15px" flex>
+				<h5>Filter</h5>
+			</div>
+			<md-card class="right-shadow" style="padding-left: 10px; margin-bottom: 20px" layout="column">
+				
+				<div layout="row">
+					<md-input-container class="md-block" style="margin-bottom:0; margin-right: 30px" ng-if="true" flex >
+						<label>Username</label> 
+						<input ng-model="filter.userName"/>
+					</md-input-container>
+					
+					<md-input-container class="md-block" style="margin-bottom:0; margin-right: 30px" ng-if="true" flex>
+						<label>User Token</label> 
+						<input ng-model="filter.userToken"/>
+					</md-input-container>
+				</div>
+				<div layout="row">
+					<md-input-container class="md-block" style="margin-bottom:0; margin-right: 30px" ng-if="true" flex>
+						<label>Catalog Instance Id</label> 
+						<input ng-model="filter.catalogInstanceId"/>
+					</md-input-container>
+					<md-input-container class="md-block" style="margin-bottom:0; margin-right: 30px" ng-if="true" flex>
+						<label>Status</label> 
+						<input ng-model="filter.status"/>
+					</md-input-container>
+				</div>
+				<div layout="row">
+					<md-input-container class="md-block" style="margin-bottom:0; margin-right: 30px" ng-if="true" flex>
+				        <label>Start Time</label> 
+				        <input mdc-datetime-picker date="true" time="true"
+								type="text" id="time" show-todays-date	format="YYYY-MM-DD HH:mm" ng-model="filter.startTime" />
+				    </md-input-container>
+					<md-input-container class="md-block" style="margin-bottom:0; margin-right: 30px" ng-if="true" flex>
+				        <label>End Time</label> 
+				        <input mdc-datetime-picker date="true" time="true"
+								type="text" id="time" show-todays-date	format="YYYY-MM-DD HH:mm" ng-model="filter.endTime" />
+				    </md-input-container>
+				</div>
+				<div layout-align="start end" layout="row" ng-show="operation == 'import'"
+					style="margin-top: 0px">
+					<aps-upload-file flex layout="row" ng-model="file" ng-change="check()"></aps-upload-file>
+				</div>
+			</md-card>
+		</md-card-content>
+		
+		<md-card class="right-shadow" ng-if="true">
+			<md-table-container>
+				<table md-table class="nobordertop headborderbottom"
+					md-row-select multiple ng-model="search.selected">
+					<thead md-head md-order="filter.inputSortBy" md-on-reorder="findUserLoginLog">
+						<tr md-row>
+							<th md-column md-order-by="username">Username</th>
+							<th md-column md-order-by="token">User Token</th>
+							<th md-column md-order-by="catalogInstanceId">Catalog Instance</th>
+							<th md-column md-order-by="status">Status</th>
+							<th md-column md-order-by="loginTime">Login Time</th>
+							<th md-column md-order-by="logoutTime">Logout Time</th>
+						</tr>
+					</thead>
+					<tbody md-body>
+						<tr ng-hide="(search.data | filter:search.search).length">
+							<td colspan="4" md-row style="padding:24px;text-align:center">
+								No Data Available.
+							</td>
+						</tr>
+						<tr md-row ng-repeat="x in search.data "
+							class="selectable" md-select="x" md-select-id="id" md-on-select="checkDownloadButton" md-on-deselect="checkDownloadButton" md-auto-select>
+							<td md-cell>{{x.username}}</td>
+							<td md-cell>{{x.token}}</td>
+							<td md-cell>{{x.catalogInstanceId}}</td>
+							<td md-cell>{{x.status}}</td>
+							<td md-cell>{{x.loginTime | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+							<td md-cell>{{x.logoutTime | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</md-table-container>
+			<md-table-pagination md-limit="dataTable.limit" md-page="dataTable.pageable.pageNumber"
+				md-limit-options="[5,10,50]" md-on-paginate="findUserLoginLog"
+				md-total="{{dataTable.totalElements}}" md-page-select>
+			</md-table-pagination>
+		</md-card>
+		
+		<div layout="row" style="margin-top:20px" flex ng-if="true">
+			<h5>Selected Logs <span style="color:red">*</span></h5>
+		</div>
+		<md-card class="right-shadow" ng-if="true">
+			<md-table-container>
+				<table md-table class="nobordertop headborderbottom" md-row-select multiple ng-model="search.selected">
+					<thead md-head>
+						<tr md-row>
+							<th md-column>Username</th>
+							<th md-column>User Token</th>
+							<th md-column>Catalog Instance</th>
+							<th md-column>Status</th>
+							<th md-column>Login Time</th>
+							<th md-column>Logout Time</th>
+						</tr>
+					</thead>
+					<tbody md-body>
+						<tr ng-hide="search.selected.length">
+							<td colspan="4" md-row style="padding:24px;text-align:center">
+								No Data Available.
+							</td>
+						</tr>
+						<tr md-row ng-repeat="x in search.selected | orderBy: 'name' | limitTo: search.selected.length : (searchx.page - 1) * search.selected.length"	
+							class="selectable" md-select="x" md-select-id="$index" md-on-select="checkDownloadButton" md-on-deselect="checkDownloadButton" md-auto-select>
+							<td md-cell>{{x.userName}}</td>
+							<td md-cell>{{x.token}}</td>
+							<td md-cell>{{x.catalogInstanceId}}</td>
+							<td md-cell>{{x.status}}</td>
+							<td md-cell>{{x.loginTime | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+							<td md-cell>{{x.logoutTime | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</md-table-container>
+			<md-table-pagination md-limit="search.selected.length" md-page="searchx.page" md-total="{{search.selected.length}}" md-page-select>
+			</md-table-pagination>
+		</md-card>
+		
+		<div layout="row">
+			<md-button style="width:200px" class="md-raised md-warn" ng-click="clear()">Clear</md-button>
+			<div flex></div>
+			<md-button style="width:200px" md-colors="!ui.disableDownloadButton ? {'background':'green'} : {}" class="md-raised md-primary" ng-click="downloadUserLoginLog()"
+				ng-disabled="ui.disableDownloadButton">Download</md-button>
+			<md-button style="width:200px" md-colors="{'background':'green'}" class="md-raised md-primary" ng-click="findUserLoginLog()"
+				ng-disabled="false">Find</md-button>
+		</div>
+	</div>
+</md-content>

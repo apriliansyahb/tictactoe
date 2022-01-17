@@ -1,0 +1,148 @@
+<md-content class="md-padding" layout="column">
+	<div class="md-padding">
+		<h2>Compare Nodin</h2>
+		
+		<md-card-content>
+			<md-card class="right-shadow" style="margin-bottom: 20px">
+				<div layout="row" style="margin-top:15px" flex>
+					<h5>Configurations</h5>
+				</div>
+	          	
+	          	<div layout="row" layout-wrap flex>
+	            	<div flex="100">
+	              		<md-checkbox ng-model="compareByCollection" ng-click="clear()">Compare By Collections</md-checkbox>
+	              		<md-checkbox ng-model="filter.liveVersion">Entity Live Version</md-checkbox>
+
+	            	</div>
+	            	
+	          	</div>
+	        </md-card>
+	        
+	        <md-card class="right-shadow" layout="row" flex>
+	        	<div flex="20">
+	        		<div layout="row" flex>
+						<h5>Expected Entity Baseline</h5>
+					</div>
+			        
+			        <div layout="row" flex>
+						<md-button class="md-raised" ng-click="downloadE2ECompareTemplate()" flex>Download</md-button>
+					</div>
+	        	</div>
+	        	<div flex="5"></div>
+	        	<div flex>
+	        		<div layout="row" flex>
+						<h5 flex>Expected File</h5>
+					</div>
+								
+					<div layout="row" style="margin-top: -10px;">
+						<aps-upload-file flex="95" layout="row" ng-model="expectedFile" ng-change="checkExpectedFile();checkRunButton()" placeholder=""></aps-upload-file>
+					</div>
+	        	</div>
+	        </md-card>
+	    
+		</md-card-content>
+		<md-card class="right-shadow" style="margin-top: 20px">
+			<div layout="row" flex>
+				<h5>Search Entities</h5>
+			</div>
+			
+			<md-input-container class="md-block" style="margin-bottom: 32px">
+				<label>Template Name</label> 
+				<md-select ng-model="filter.templateName" ng-change="checkFindEntityButton()" >
+					<md-option ng-repeat="x in templates" value="{{x}}">
+						{{x}}
+					</md-option>
+				</md-select>
+			</md-input-container>
+				
+			<md-input-container class="md-block" style="margin-bottom:0" ng-if="compareByCollection">
+				<textarea ng-model="filter.bidOrNameCollections" rows="8" name="bidOrNameCollections" ng-change="checkRunButton()" placeholder="Please input 'BID' or 'Entity Names', for separator you can use 'comma' or 'new line'"></textarea>
+			</md-input-container>
+			
+			<div layout="row" ng-if="!compareByCollection">
+				<md-input-container class="md-block" style="margin-bottom:0"
+					ng-keydown="$event.keyCode == 13 && findEntity()" flex>
+					<label>Entity Name or BID </label> 
+					<md-icon class="material-icons">search</md-icon>
+					<input ng-model="search.search"/>
+				</md-input-container>
+				<md-button style="width:200px; height:20px; margin-left: 15px;" 
+					class="md-raised md-warn" ng-click="findEntity()" 
+					ng-disabled="!filter.templateName" md-colors="filter.templateName ? {'background':'green'} : {}">
+					Search
+				</md-button>
+			</div>
+		</md-card>
+		
+		<md-card class="right-shadow" style="margin-top: 30px" ng-if="!compareByCollection">
+			<md-table-container>
+				<table md-table class="nobordertop headborderbottom"
+					md-row-select multiple ng-model="search.selected">
+					<thead md-head md-order="search.order">
+						<tr md-row>
+							<th md-column md-order-by="name">Name</th>
+							<th md-column md-order-by="businessID">BID</th>
+							<th md-column md-order-by="publicID">Workflow Status</th>
+						</tr>
+					</thead>
+					<tbody md-body>
+						<tr ng-hide="(search.data | filter:search.search).length">
+							<td colspan="5" md-row style="padding:24px;text-align:center">
+								No Data Available.
+							</td>
+						</tr>
+						<tr md-row ng-repeat="x in search.data"
+							class="selectable" md-select="x" md-select-id="$index" md-on-select="checkRunButton" md-on-deselect="checkRunButton" md-auto-select>
+							<td md-cell>{{x.name}}</td>
+							<td md-cell>{{x.businessID}}</td>
+							<td md-cell>{{x.workflowStatus}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</md-table-container>
+			<md-table-pagination md-limit="dataTable.pageSize" md-page="dataTable.pageNumber"
+				md-limit-options="[5,10,50]" md-on-paginate="findEntity"
+				md-total="{{dataTable.totalElements}}" md-page-select>
+			</md-table-pagination>
+		</md-card>
+		
+		<md-card class="right-shadow" ng-if="!compareByCollection">
+			<div layout="row" style="margin-top:20px" flex>
+				<h5>Selected Entities</h5>
+			</div>
+			<md-table-container>
+				<table md-table class="nobordertop headborderbottom" md-row-select multiple ng-model="search.selected">
+					<thead md-head>
+						<tr md-row>
+							<th md-column md-order-by="name">Name</th>
+							<th md-column md-order-by="businessID">BID</th>
+							<th md-column md-order-by="publicID">Workflow Status</th>
+						</tr>
+					</thead>
+					<tbody md-body>
+						<tr ng-hide="search.selected.length">
+							<td colspan="5" md-row style="padding:24px;text-align:center">
+								No Data Available.
+							</td>
+						</tr>
+						<tr md-row ng-repeat="x in search.selected | orderBy: 'name' | limitTo: search.selected.length : (searchx.page - 1) * search.selected.length"	
+							class="selectable" md-select="x" md-select-id="$index" md-on-select="checkRunButton" md-on-deselect="checkRunButton" md-auto-select>
+							<td md-cell>{{x.name}}</td>
+							<td md-cell>{{x.businessID}}</td>
+							<td md-cell>{{x.workflowStatus}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</md-table-container>
+			<md-table-pagination md-limit="search.selected.length" md-page="searchx.page" md-total="{{search.selected.length}}" md-page-select>
+			</md-table-pagination>
+		</md-card>
+		
+		<div layout="row">
+			<md-button style="width:200px" class="md-raised md-warn" ng-click="clearNodin()">Clear</md-button>
+			<div flex></div>
+			<md-button style="width:200px" md-colors="!ui.disableRunButton ? {'background':'green'} : {}" class="md-raised md-primary"
+				ng-disabled="ui.disableRunButton" ng-click="submitCompareNodin()">Run</md-button>
+		</div>
+	</div>
+</md-content>

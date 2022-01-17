@@ -1,0 +1,19 @@
+<md-dialog aria-label="Policy" style="max-height:85%; padding:16px">
+	<form>
+		<md-dialog-content style="width:400px;" layout="column">
+			<div layout="row" layout-align="center center" style="font-size:xx-large; margin-bottom: 20px; font-weight: 500;">Compare Finished</div>
+			<div layout="row" layout-align="center center" style="margin-bottom: 20px;">
+				<md-icon ng-if="model.result > 0" style="width: 110px; height: 110px; font-size: 110px; color: #f8bb86">error_outline</md-icon>
+				<md-icon ng-if="model.result == 0" style="width: 110px; height: 110px; font-size: 110px; color: #a7dd89">check_circle</md-icon>
+			</div>
+			<div layout="row" layout-align="center center" style="margin-bottom: 20px;">
+				Not Match Result Occured :&nbsp;<span ng-style="model.result > 0 ? { 'color' : 'red'} : { 'color' : '#a7dd89'}">{{ model.result }}</span>
+			</div>
+		</md-dialog-content>
+		
+		<md-dialog-actions layout="row" layout-align="center center" style="padding:0">
+			<md-button ng-click="model.download(model.anchor)"
+				flex="80" class="md-raised md-primary" style="text-transform: none">Download Result</md-button>
+		</md-dialog-actions>
+	</form>
+</md-dialog>

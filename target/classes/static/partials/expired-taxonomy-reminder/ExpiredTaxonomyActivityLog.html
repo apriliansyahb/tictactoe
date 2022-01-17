@@ -1,0 +1,81 @@
+<md-content class="md-padding general-background" layout="column">
+	<div class="md-padding">
+		<h2 style="color: white; margin-left: 10px;">User Activity Log</h2>
+		<md-card md-whiteframe="4" style="border-radius: 10px;">
+			<div layout="row">
+				<h3 style="margin-left: 24px;">All Activity Log</h3>
+			</div>
+			<md-toolbar class="md-table-toolbar md-default">
+				<div class="md-toolbar-tools" layout="row" style="padding-right: 0px;" flex>
+					<md-input-container md-no-float style="margin: 0px; padding-right: 24px;" flex>
+						<md-icon>search</md-icon>
+						<input ng-model="activity.search" type="text" placeholder="USERNAME, DATETIME, ACTIVITY, etc" aria-label="Search" style="font-size: 0.7em;">
+					</md-input-container>
+					<div layout="row" layout-align="center center" style="font-size: 14px; cursor: pointer; outline: 0;" flex="10" ng-click="downloadNotification()">
+						<span style="color: #2065ac;">Download</span>
+						<md-icon style="margin: 0 10px;color: #2065ac;">system_update_alt</md-icon>
+					</div>
+					<div layout="row" layout-align="center center" style="font-size: 14px; cursor: pointer; outline: 0;" flex="10" ng-click="">
+						<span style="color: #2065ac;">Filters</span>
+						<md-icon style="margin: 0 10px;color: #2065ac;">filter_list</md-icon>
+					</div>
+				</div>
+			</md-toolbar>
+
+			<md-table-container style="margin-bottom: 20px;">
+				<table md-table class="nobordertop headborderbottom">
+					<thead md-head>
+						<tr md-row>
+							<th md-column>USERNAME</th>
+							<th md-column>DATETIME</th>
+							<th md-column>ACTIVITY</th>
+							<th md-column>RULE NAME AFFECTED</th>
+							<th md-column style="width: 200px; text-align: center;">LOG DESCRIPTION</th>
+						</tr>
+					</thead>
+					<tbody md-body>
+						<tr ng-hide="search.data.length">
+							<td colspan="5" md-row style="padding:24px;text-align:center">
+								No Data Available.
+							</td>
+						</tr>
+						<tr md-row ng-repeat="x in search.data | filter: activity.search | limitTo: dataTable.limit : ((dataTable.pageable.pageNumber - 1) * dataTable.limit)">
+							<td md-cell>{{ x.userName }}</td>
+							<td md-cell>{{ x.activityDate | date:'yyyy-MM-dd HH:mm' }}</td>
+							<td md-cell>{{ x.activity }}</td>
+							<td md-cell>{{ x.ruleName }}</td>
+							<td md-cell>
+								<div layout="row" layout-align="center center">
+									<md-button class="md-icon-button" ng-click="showLogDescription($event, x.desc)">
+										<md-tooltip md-direction="bottom">Description</md-tooltip>
+										<md-icon style="color: #2065ac;">insert_comment</md-icon>
+									</md-button>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</md-table-container>
+			<md-table-pagination md-limit="dataTable.limit" md-page="dataTable.pageable.pageNumber"
+								 md-limit-options="[5,10,50]" md-on-paginate=""
+								 md-total="{{dataTable.totalElements}}" md-page-select>
+			</md-table-pagination>
+		</md-card>
+	</div>
+</md-content>
+<div style="visibility: hidden">
+	<div class="md-dialog-container" id="dialogDescription">
+		<md-dialog layout="column" style="width: 20%;">
+			<h2 style="text-align: center; color: #2065ac">Log Description</h2>
+			<md-card md-whiteframe="4" layout-padding="20" style="min-height: 200px; border-radius: 10px; margin: 20px;">
+				{{ description }}
+			</md-card>
+			<div layout="row" layout-align="center center" style="margin: 20px;">
+				<md-button class="md-raised" style="background-color: #2065ac; color: white;
+					text-transform: none; border-radius: 5px;" ng-click="closeDialog()" flex="33">
+					Close
+				</md-button>
+			</div>
+		</md-dialog>
+	</div>
+</div>

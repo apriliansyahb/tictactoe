@@ -1,0 +1,14 @@
+<md-content class="md-padding" layout="row" layout-align="center center" layout-fill flex style="background-color:#fff">
+	<div layout="column" flex="40">
+		<div layout="column" layout-align="center center" style="margin-bottom:35px">
+			 <div style="font-size: 25px; color: rgba(112,112,112,1)">
+				<span>Sorry... You don't have privilege to access this page</span>
+			</div>
+			<md-button flex class="md-raised md-primary" ng-click="redirect()">Back to Dashboard</md-button>
+		</div>
+	</div>
+</md-content>
+<div style="position: absolute; left: 30px; bottom: 20px;">
+	<svg ng-click="logout()" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="rgba(112,112,112,1)" width="36px" height="36px"><path d="M0 0h24v24H0z" fill="none"/><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>
+	<!-- <span>Log Out</span> -->
+</div>

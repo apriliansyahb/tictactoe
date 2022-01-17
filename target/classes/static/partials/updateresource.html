@@ -1,0 +1,146 @@
+<md-content class="md-padding" layout="column">
+	<div class="md-padding">
+		<h2>Fact Operation - Update Fact</h2>
+		
+		<div layout="row" style="margin-top:16px; margin-bottom:24px">
+			<md-button class="md-raised" ng-click="pick('export')"
+				ng-disabled="operation == 'export'">Export</md-button>
+			<md-button class="md-raised" ng-click="pick('import')"
+				ng-disabled="operation == 'import'">Import</md-button>
+			<md-button class="md-raised" style="width:200px" ng-click="updateAllDumpReferences()">
+				Update All References
+			</md-button>
+		</div>
+	
+		<md-card-content>
+			<div layout="row" style="margin-top:15px" flex>
+				<h5>Configurations</h5>
+			</div>
+			<md-card class="right-shadow" style="padding-left: 10px; margin-bottom: 20px">
+	          <div layout="row" layout-wrap flex>
+	            <div flex="100">
+		          	<md-checkbox ng-click="clickExportByCollection()" ng-if="operation == 'export'" ng-model="exportRequest.exportByCollection">
+		                Export By Collections
+		           	</md-checkbox>
+		           	<md-checkbox ng-checked="" ng-if="false" ng-model="exportRequest.bulkProcessing">
+		                Bulk Processing
+		           	</md-checkbox>
+		          	<md-checkbox ng-checked="" ng-if="true" ng-model="exportRequest.downloadXml">
+		                Download XML
+		      		</md-checkbox>
+	            </div>
+	          </div>
+	        </md-card>
+			
+			<div layout="row" style="margin-top:15px" flex>
+				<h5>Details</h5>
+			</div>
+			<md-card class="right-shadow" style="padding-left: 10px; margin-bottom: 20px">
+				<md-input-container class="md-block" style="margin-bottom:32px"> 
+					<label>Template Name</label> 
+					<md-select ng-model="exportRequest.templateName" 
+						ng-change="find()"
+						ng-disabled="exportRequest.catalogOperation.includes('Export') || exportRequest.catalogOperation.includes('Import')">
+						<md-option ng-repeat="x in templates" value="{{x}}">
+					    		{{x}}
+					    </md-option>
+				 	</md-select>
+				</md-input-container>
+				
+				<md-input-container class="md-block" style="margin-bottom:0" ng-if="operation == 'export'">
+					<label>Export Filename</label> 
+					<input ng-model="exportRequest.filename"/>
+				</md-input-container>
+				
+				<md-input-container class="md-block" style="margin-bottom:0" ng-if="operation == 'import'">
+					<label>Response Filename</label> 
+					<input ng-model="exportRequest.filename"/>
+				</md-input-container>
+				
+				<md-input-container class="md-block" style="margin-bottom:0"
+					ng-show="operation == 'export'" ng-if="!exportRequest.exportByCollection">
+					<label>Search </label> 
+					<md-icon class="material-icons">search</md-icon>
+					<input ng-model="search.search"/>
+				</md-input-container>
+				
+				<div layout-align="start end" layout="row" ng-show="operation == 'import'"
+					style="margin-top: 0px">
+					<aps-upload-file flex layout="row" ng-model="file" ng-change="check()"></aps-upload-file>
+				</div>
+				
+				<md-input-container class="md-block" style="margin-bottom:0" ng-if="operation == 'export' && exportRequest.exportByCollection">
+					<textarea ng-model="exportRequest.factNameCollections" rows="8" name="factNameCollections" ng-change="check()" 
+					placeholder="Please input 'Fact Name', for separator you can use 'comma' or 'new line'"></textarea>
+				</md-input-container>
+			</md-card>
+		</md-card-content>
+		
+		<md-card class="right-shadow" ng-show="true" ng-if="operation == 'export' && !exportRequest.exportByCollection">
+			<md-table-container>
+				<table md-table class="nobordertop headborderbottom"
+					md-row-select multiple ng-model="search.selected">
+					<thead md-head md-order="search.order">
+						<tr md-row>
+							<th md-column md-order-by="factName">Name</th>
+							<th md-column md-order-by="factGuid">GUID</th>
+						</tr>
+					</thead>
+					<tbody md-body>
+						<tr ng-hide="(search.data | filter:search.search).length">
+							<td colspan="4" md-row style="padding:24px;text-align:center">
+								No Data Available.
+							</td>
+						</tr>
+						<tr md-row ng-repeat="x in search.data | orderBy: search.order | filter: search.search | limitTo: search.limit : (search.page - 1) * search.limit"
+							class="selectable" md-select="x" md-select-id="$index" md-on-select="check" md-on-deselect="check" md-auto-select>
+							<td md-cell>{{x.factName}}</td>
+							<td md-cell>{{x.factGuid}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</md-table-container>
+			<md-table-pagination md-limit="search.limit" md-page="search.page"
+				md-limit-options="[5,10,50]"
+				md-total="{{(search.data | filter:search.search).length}}" md-page-select>
+			</md-table-pagination>
+		</md-card>
+		
+		<div layout="row" style="margin-top:20px" flex ng-if="operation == 'export' && !exportRequest.exportByCollection">
+			<h5>Selected Facts <span style="color:red">*</span></h5>
+		</div>
+		<md-card class="right-shadow" ng-if="operation == 'export' && !exportRequest.exportByCollection">
+			<md-table-container>
+				<table md-table class="nobordertop headborderbottom" md-row-select multiple ng-model="search.selected">
+					<thead md-head>
+						<tr md-row>
+							<th md-column>Name</th>
+							<th md-column>GUID</th>
+						</tr>
+					</thead>
+					<tbody md-body>
+						<tr ng-hide="search.selected.length">
+							<td colspan="4" md-row style="padding:24px;text-align:center">
+								No Data Available.
+							</td>
+						</tr>
+						<tr md-row ng-repeat="x in search.selected | orderBy: 'name' | limitTo: search.selected.length : (searchx.page - 1) * search.selected.length"	
+							class="selectable" md-select="x" md-select-id="$index" md-on-select="check" md-on-deselect="check" md-auto-select>
+							<td md-cell>{{x.factName}}</td>
+							<td md-cell>{{x.factGuid}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</md-table-container>
+			<md-table-pagination md-limit="search.selected.length" md-page="searchx.page" md-total="{{search.selected.length}}" md-page-select>
+			</md-table-pagination>
+		</md-card>
+		
+		<div layout="row">
+			<md-button style="width:200px" class="md-raised md-warn" ng-click="clear()">Clear</md-button>
+			<div flex></div>
+			<md-button style="width:200px" md-colors="!buttondisabled ? {'background':'green'} : {}" class="md-raised md-primary" ng-click="run()"
+				ng-disabled="buttondisabled">Run</md-button>
+		</div>
+	</div>
+</md-content>

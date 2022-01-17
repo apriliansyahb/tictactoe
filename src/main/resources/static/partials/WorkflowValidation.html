@@ -1,0 +1,28 @@
+<md-content class="md-padding" layout="column">
+	<div class="md-padding">
+		<h2>Workflow Validation</h2>
+		
+		<md-card-content>
+			<div layout="row">
+				<md-button class="md-icon-button" 
+					style="margin:auto"
+					ng-click="removeFiles($index)"> 
+					<md-icon class="material-icons md-warn" >clear</md-icon>
+				</md-button>
+				<md-card  layout="row" flex>
+					<md-card-content layout-align="start end" layout="row" layout-wrap flex>
+						<aps-upload-file flex="33" layout="row" ng-model="file" ng-change="check()"
+							placeholder=""></aps-upload-file>
+					</md-card-content>
+				</md-card>
+			</div>
+		</md-card-content>
+		
+		<div layout="row">
+			<md-button style="width:200px" class="md-raised md-warn" ng-click="clear()">Clear</md-button>
+			<div flex></div>
+			<md-button style="width:200px" md-colors="!buttondisabled ? {'background':'green'} : {}" class="md-raised md-primary"
+				ng-disabled="buttondisabled" ng-click="submitWorkflowValidation()">Run</md-button>
+		</div>
+	</div>
+</md-content>

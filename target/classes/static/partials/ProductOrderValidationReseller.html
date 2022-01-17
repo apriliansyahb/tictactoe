@@ -1,0 +1,680 @@
+<md-content class="md-padding general-background" layout="column">
+	<div class="md-padding">
+		<h2 style="color: white;">Order Validation Batch - Reseller</h2>
+		<md-tabs class="tabs-simple md-no-ink-bar-color" md-dynamic-height>
+
+			<md-tab style="text-transform: none;" label="Voucher Fisik" md-on-select="resetInputVF()">
+				<div layout="row" style="height: 700px; overflow-y: scroll;" flex>
+					<div layout="column" flex="15">
+						<md-card layout="column"  layout-align="space-between " flex>
+							<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;"
+									   ng-style="isCurrentVFStep(1) ? {'color': 'white', 'background-color': '#2065ac'} : {'background':'silver', 'color':'white'}">
+								Submit Dataset
+							</md-button>
+							<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;"
+									   ng-style="isCurrentVFStep(2) ? {'color': 'white', 'background-color': '#2065ac'} : {'background':'silver', 'color':'white'}">
+								Quick Check
+							</md-button>
+							<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;"
+									   ng-style="isCurrentVFStep(3) ? {'color': 'white', 'background-color': '#2065ac'} : {'background':'silver', 'color':'white'}">
+								Run Test
+							</md-button>
+							<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;"
+									   ng-style="isCurrentVFStep(4) ? {'color': 'white', 'background-color': '#2065ac'} : {'background':'silver', 'color':'white'}">
+								Generate Report
+							</md-button>
+						</md-card>
+					</div>
+					<div flex="3"></div>
+					<div layout="column" flex>
+						<!-- Card Step 1 -->
+						<md-card layout="column" style="padding: 5px 30px 30px 30px;" flex ng-if="currentVFStep === 1">
+							<div  layout="column" flex>
+								<div layout="row" flex="nogrow" ng-if="!vfDataset.length">
+									<h3 flex>Submit Dataset</h3>
+									<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;color: white;background-color: #2065ac" ng-click="downloadVFTemplate()">
+										Download Dataset Template
+									</md-button>
+								</div>
+								<div ng-if="!vfDataset.length" layout="row" style="margin-bottom: 20px;" flex="nogrow">
+									<div layout="row" layout-align="start center" flex="30">
+										<span>Environment</span>
+									</div>
+									<md-radio-group ng-model="vf.env" layout="row" style="font-size: 0.8em;" layout-align="start center" aria-labelledby="environment">
+										<md-radio-button value="Preprod" class="md-primary">Preprod</md-radio-button>
+										<md-radio-button value="Prod" class="md-primary">Prod</md-radio-button>
+									</md-radio-group>
+								</div>
+								<div ng-if="!vfDataset.length" layout="row" flex="nogrow">
+									<div layout="row" layout-align="start center" flex="30"><span>Dataset<sup style="color:red; font-weight: bold; font-size: 1em;"> *</sup></span></div>
+									<div layout="row" layout-align="start center" flex>
+										<input type="file" ngf-select="SelectVFFile($file)" ng-model="vf.file" flex/>
+									</div>
+									<md-icon style="color:#2065ac;">open_in_browser</md-icon>
+								</div>
+
+								<div ng-if="!vfDataset.length" layout="row" flex="nogrow">
+									<div layout="row" layout-align="start center"  flex="30" >Set Dataset Filename</div>
+									<md-input-container flex style="margin-bottom: 0px;">
+										<input ng-model="vf.filename" aria-label="expected filename"/>
+									</md-input-container>
+								</div>
+
+								<h3 ng-if="vfDataset.length">Dataset Editor</h3>
+								<div layout="column" flex ng-if="vfDataset.length">
+									<hot-table settings="settings"
+										row-headers="true"
+										min-spare-rows="minSpareRows"
+										datarows="vfDataset"
+										col-headers="vfHeaders"
+										height="520" style="margin-top: 20px;">
+
+<!--										<hot-column data="ENVIRONMENT" title="'ENVIRONMENT'" type="grayedOut"></hot-column>-->
+<!--										<hot-column data="TRANSACTION_ID" title="'TRANSACTION ID'" type="grayedOut"></hot-column>-->
+<!--										<hot-column data="MSISDN_A" title="'MSISDN A'" type="grayedOut"></hot-column>-->
+<!--										<hot-column data="MSISDN_B" title="'MSISDN B (GIFT)'" type="grayedOut"></hot-column>-->
+<!--										<hot-column data="PRODUCT_ID" title="'PRODUCT ID'" type="grayedOut"></hot-column>-->
+<!--										<hot-column data="ORGANIZATION_CODE" title="'ORGANIZATION CODE'" type="grayedOut"></hot-column>-->
+<!--										<hot-column data="PURCHASE_TYPE" title="'PURCHASE TYPE'" type="grayedOut"></hot-column>-->
+<!--										<hot-column data="ORDER_TYPE" title="'ORDER TYPE'" type="grayedOut"></hot-column>-->
+									</hot-table>
+								</div>
+
+								<div layout="row" flex="nogrow">
+									<div ng-if="!vfDataset.length" layout="row" layout-align="start center">
+										<span style="color:red; font-weight: bold">*Required</span>
+									</div>
+									<div layout="row" layout-align="end end" flex>
+										<md-button class="md-raised" style="color:#2065ac; background-color: white; text-transform: none; font-size: 0.8em;" ng-click="resetInputVF()">Cancel</md-button>
+										<div flex="3"></div>
+										<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;" ng-disabled="!isVFFileSelected();" ng-if="!showPreviewVF"
+												   ng-style="isVFFileSelected() ? {'color': 'white', 'background-color': '#2065ac'} : {'background':'silver', 'color':'white'}" ng-click="UploadVFFile()">
+											Submit Dataset
+										</md-button>
+										<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;color: white;background-color: #2065ac" ng-if="showPreviewVF" ng-click="QuickCheckVF()">
+											Quick Check
+										</md-button>
+									</div>
+								</div>
+							</div>
+						</md-card>
+
+						<!-- Card Step 2 -->
+						<md-card layout="column" style="padding: 5px 30px 30px 30px;" ng-if="currentVFStep === 2">
+							<div layout="column">
+								<h4 flex>Quick Check</h4>
+								<span >Dataset has been cleaned!</span>
+							</div>
+
+							<div layout="row">
+								<md-card class="md-padding" md-whiteframe="4" layout="column" layout-margin="1" flex="20">
+									<div layout="row" layout-align="center center">
+										<span style="font-size: 1.8em; color: mediumseagreen">{{ rowInputVF.row }}</span>
+									</div>
+									<div layout="row" layout-align="center center">
+										Remaining Row
+									</div>
+								</md-card>
+								<md-card class="md-padding" md-whiteframe="4" layout="column" layout-margin="1" flex="20">
+									<div layout="row" layout-align="center center">
+										<span style="font-size: 1.8em; color: red;">{{ rowInputVF.duplicate }}</span>
+										<span>/</span>
+										<span>{{ rowInputVF.total }}</span>
+									</div>
+									<div layout="row" layout-align="center center">
+										Duplicate Row
+									</div>
+								</md-card>
+							</div>
+
+							<md-tabs class="tabs-blue md-no-ink-bar-color" flex>
+								<md-tab style="text-transform: none;" label="Remaining Row" flex>
+									<div layout="column" style="margin-top: 20px;">
+										<hot-table settings="settings"
+												   row-headers="true"
+												   min-spare-rows="minSpareRows"
+												   col-headers="vfHeaders"
+												   datarows="rowInputVF.data"
+												   height="320">
+
+<!--											<hot-column data="ENVIRONMENT" title="'ENVIRONMENT'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="TRANSACTION_ID" title="'TRANSACTION ID'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="MSISDN_A" title="'MSISDN A'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="MSISDN_B" title="'MSISDN B (GIFT)'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="PRODUCT_ID" title="'PRODUCT ID'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="ORGANIZATION_CODE" title="'ORGANIZATION CODE'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="PURCHASE_TYPE" title="'PURCHASE TYPE'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="ORDER_TYPE" title="'ORDER TYPE'" type="grayedOut"></hot-column>-->
+
+										</hot-table>
+									</div>
+								</md-tab>
+								<md-tab style="text-transform: none;" label="Duplicate Row" flex>
+									<div layout="column" style="margin-top: 20px;">
+										<hot-table settings="settings"
+												   row-headers="true"
+												   min-spare-rows="minSpareRows"
+												   col-headers="vfHeaders"
+												   datarows="rowInputVF.dataDuplicate"
+												   height="320">
+
+<!--											<hot-column data="ENVIRONMENT" title="'ENVIRONMENT'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="TRANSACTION_ID" title="'TRANSACTION ID'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="MSISDN_A" title="'MSISDN A'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="MSISDN_B" title="'MSISDN B (GIFT)'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="PRODUCT_ID" title="'PRODUCT ID'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="ORGANIZATION_CODE" title="'ORGANIZATION CODE'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="PURCHASE_TYPE" title="'PURCHASE TYPE'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="ORDER_TYPE" title="'ORDER TYPE'" type="grayedOut"></hot-column>-->
+
+										</hot-table>
+									</div>
+								</md-tab>
+							</md-tabs>
+
+							<div layout="row" flex="nogrow">
+								<div layout="row" layout-align="end end" flex>
+									<md-button class="md-raised" style="color:#2065ac; background-color: white; text-transform: none; font-size: 0.8em;" ng-click="resetInputVF()">Cancel</md-button>
+									<div flex="3"></div>
+									<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;color: white;background-color: #2065ac" ng-click="RunTestVF()">
+										Run Test
+									</md-button>
+								</div>
+							</div>
+						</md-card>
+
+						<md-card layout="column" style="padding: 5px 30px 30px 30px;" ng-if="currentVFStep === 3">
+
+
+						</md-card>
+
+						<md-card layout="column" style="padding: 5px 30px 30px 30px;" ng-if="currentVFStep === 4">
+							<div layout="row">
+								<h4 flex>Result</h4>
+								<md-button class="md-raised" style="text-transform: none; font-size: 0.8em; background-color: #2065ac; color: white;" ng-click="exportJsonToPdfVF()">
+									Export to PDF&nbsp;<md-icon md-svg-src="img/pdf-file.svg" style="color: white;" aria-label="file-pdf"></md-icon>
+								</md-button>
+								<md-button class="md-raised" style="text-transform: none; font-size: 0.8em; background-color: #2065ac; color: white;" ng-click="exportJsonToExcelVF()">
+									Export to Excel&nbsp;<md-icon md-svg-src="img/xlsx-file.svg" style="color: white;" aria-label="file-xlsx"></md-icon>
+								</md-button>
+								<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;color: white;background-color: #2065ac">Continue to Product FUT</md-button>
+							</div>
+							<div layout="column" style="padding: 5px; border-style: solid; border-width: thin; border-color: red;" flex id="printableVF">
+								<div layout="row">
+									<div layout="row" layout-margin="" flex="nogrow">
+										<div layout="row">
+											<img width="210px" src="img/telkomsel_new.png">
+										</div>
+										<div layout="column" layout-margin="" layout-align="center start">
+											<span style="font-size: 1.6em; font-weight: bold;">Digital Core</span>
+											<span style="font-size: 0.8em;">Product Automation Test Report</span>
+										</div>
+									</div>
+									<md-divider style="margin: 10px 10px; border-color: red;"></md-divider>
+									<div layout="column" style="color: #2065ac; font-size: 0.8em;" flex>
+										<md-card layout="row" style="padding: 5px 20px;" flex>
+											<div layout="row" layout-align="start center" flex>Tester</div>
+											<div layout="row" layout-align="end center" flex>{{ tester }}</div>
+										</md-card>
+										<md-card layout="row" style="padding: 5px 20px;" flex>
+											<div layout="row" layout-align="start center" flex>Dataset</div>
+											<div layout="row" layout-align="end center" flex>{{ vf.file.name }}</div>
+										</md-card>
+									</div>
+									<div layout="column" style="color: #2065ac; font-size: 0.8em;" flex>
+										<md-card layout="row" style="padding: 5px 20px;" flex>
+											<div layout="row" layout-align="start center" flex="nogrow">Date</div>
+											<div layout="row" layout-align="end center" flex>{{ currentDate }}</div>
+										</md-card>
+										<md-card layout="row" style="padding: 5px 20px;" flex>
+											<div layout="row" layout-align="start center" flex="nogrow">Time</div>
+											<div layout="row" layout-align="end center" flex>{{ currentTime }}</div>
+										</md-card>
+									</div>
+								</div>
+								<md-divider layout="row" style="margin: 10px 0px 0px 0px; background-color: red;"></md-divider>
+								<div layout="column" flex>
+									<md-table-container>
+										<table md-table>
+											<thead md-head md-order="filter.inputSortBy" md-on-reorder="">
+											<tr md-row>
+												<th md-column md-order-by="testId">TEST ID</th>
+												<th md-column md-order-by="bid">BID</th>
+												<th md-column md-order-by="reqTestData" style="width: 40%;">REQUEST AND TEST DATA</th>
+												<th md-column md-order-by="result" style="width: 40%;">RESULT</th>
+											</tr>
+											</thead>
+											<tbody md-body>
+											<tr md-row ng-repeat="orderValidation in result" ng-style="$even ? {'background-color': 'lavender'} : {'background-color': 'whitesmoke'}" ng-class-even="'even-row'">
+												<td md-cell style="vertical-align: baseline;">{{ orderValidation.transaction_id }}</td>
+												<td md-cell style="vertical-align: baseline;">{{ orderValidation.product_id }}</td>
+												<td md-cell style="vertical-align: baseline;">
+													<div layout="column" style="color: #2065ac; font-size: 0.8em;" flex>
+														<md-card layout="row" style="padding: 5px 20px;" flex ng-if="orderValidation.service_id_a">
+															<div layout="row" layout-align="start center" style="opacity: 70%;" flex>MSISDN A</div>
+															<div layout="row" layout-align="end center" flex>{{ orderValidation.service_id_a }}</div>
+														</md-card>
+														<md-card layout="row" style="padding: 5px 20px;" flex ng-if="orderValidation.service_id_b">
+															<div layout="row" layout-align="start center" style="opacity: 70%;" flex>MSISDN B</div>
+															<div layout="row" layout-align="end center" flex>{{ orderValidation.service_id_b }}</div>
+														</md-card>
+														<md-card layout="row" style="padding: 5px 20px;" flex ng-if="orderValidation.brand">
+															<div layout="row" layout-align="start center" style="opacity: 70%;" flex>BRAND</div>
+															<div layout="row" layout-align="end center" flex>{{ orderValidation.brand }}</div>
+														</md-card>
+														<md-card layout="row" style="padding: 5px 20px;" flex ng-if="orderValidation.balance">
+															<div layout="row" layout-align="start center" style="opacity: 70%;" flex>BALANCE</div>
+															<div layout="row" layout-align="end center" flex>{{ orderValidation.balance }}</div>
+														</md-card>
+														<md-card layout="row" style="padding: 5px 20px;" flex ng-if="orderValidation.channel">
+															<div layout="row" layout-align="start center" style="opacity: 70%;" flex>CHANNEL</div>
+															<div layout="row" layout-align="end center" flex>{{ orderValidation.channel }}</div>
+														</md-card>
+														<md-card layout="row" style="padding: 5px 20px;" flex ng-if="orderValidation.purchase_mode">
+															<div layout="row" layout-align="start center" style="opacity: 70%;" flex>PURCHASE MODE</div>
+															<div layout="row" layout-align="end center" flex>{{ orderValidation.purchase_mode }}</div>
+														</md-card>
+														<md-card layout="row" style="padding: 5px 20px;" flex ng-if="orderValidation.payment_method">
+															<div layout="row" layout-align="start center" style="opacity: 70%;" flex>PAYMENT METHOD</div>
+															<div layout="row" layout-align="end center" flex>{{ orderValidation.payment_method }}</div>
+														</md-card>
+													</div>
+												</td>
+												<td md-cell style="vertical-align: baseline;">
+													<div layout="row" flex>
+														<div layout="column" style="color: #2065ac; font-size: 0.8em;" flex ng-if="orderValidation.status_code === 'RV-0000'">
+															<div layout="column">
+																<md-button style="color: white; background-color: limegreen;">ELIGIBLE</md-button>
+															</div>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>COMM NAME</div>
+																<div layout="row" layout-align="end center" style="white-space: pre-wrap; text-align: right;" flex>{{ orderValidation.product_commercial_name }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>PRICE</div>
+																<div layout="row" layout-align="end center" style="white-space: pre-wrap; text-align: right;" flex>{{ orderValidation.price }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>ORIGINAL PRICE</div>
+																<div layout="row" layout-align="end center" style="white-space: pre-wrap; text-align: right;" flex>{{ orderValidation.original_price }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>ACTIVE PERIOD</div>
+																<div layout="row" layout-align="end center" style="white-space: pre-wrap; text-align: right;" flex>{{ orderValidation.active_period }}</div>
+															</md-card>
+															<md-card layout="row" layout-align="space-between none" style="padding: 5px 20px;" flex="nogrow">
+																<span flex>ALLOWANCE</span> <span style="text-align: right;" flex>{{ transformAllowance(orderValidation.allowance) }}</span>
+															</md-card>
+															<md-card layout="row" layout-align="space-between none" style="padding: 5px 20px;" flex="nogrow">
+																<span flex>NOTIFICATION</span> <span style="text-align: right;" flex>{{ transformNotification(orderValidation) }}</span>
+															</md-card>
+														</div>
+														<div layout="column" style="color: #2065ac; font-size: 0.8em;" flex ng-if="orderValidation.status_code !== 'RV-0000'">
+															<div layout="column">
+																<md-button style="color: white; background-color: red;">NOT ELIGIBLE</md-button>
+															</div>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>REASON</div>
+																<div layout="row" layout-align="end center" style="white-space: pre-wrap; text-align: right;" flex>
+																	{{ orderValidation.status_code }} <br> {{ orderValidation.status_description }}
+																</div>
+															</md-card>
+															<md-card layout="row" layout-align="space-between none" style="padding: 5px 20px;" flex="nogrow" ng-if="orderValidation.notification">
+																<span flex>NOTIFICATION</span> <span style="text-align: right;" flex>{{ orderValidation.notification }}</span>
+															</md-card>
+														</div>
+													</div>
+												</td>
+											</tr>
+											</tbody>
+										</table>
+									</md-table-container>
+								</div>
+							</div>
+						</md-card>
+					</div>
+				</div>
+			</md-tab>
+			<!-- TAB 'Voucher Fisik' end here -->
+
+			<!-- TAB 'ARP' start here -->
+			<md-tab style="text-transform: none;" label="ARP & AP" md-on-select="resetInputARP()">
+				<div layout="row" style="height: 700px; overflow-y: scroll;" flex>
+					<div layout="column" flex="15">
+						<md-card layout="column"  layout-align="space-between " flex>
+							<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;"
+									   ng-style="isCurrentARPStep(1) ? {'color': 'white', 'background-color': '#2065ac'} : {'background':'silver', 'color':'white'}">
+								Submit Dataset
+							</md-button>
+							<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;"
+									   ng-style="isCurrentARPStep(2) ? {'color': 'white', 'background-color': '#2065ac'} : {'background':'silver', 'color':'white'}">
+								Quick Check
+							</md-button>
+							<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;"
+									   ng-style="isCurrentARPStep(3) ? {'color': 'white', 'background-color': '#2065ac'} : {'background':'silver', 'color':'white'}">
+								Run Test
+							</md-button>
+							<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;"
+									   ng-style="isCurrentARPStep(4) ? {'color': 'white', 'background-color': '#2065ac'} : {'background':'silver', 'color':'white'}">
+								Generate Report
+							</md-button>
+						</md-card>
+					</div>
+					<div flex="3"></div>
+					<div layout="column" flex>
+						<!-- Card Step 1 -->
+						<md-card layout="column" style="padding: 5px 30px 30px 30px;" flex ng-if="currentARPStep === 1">
+							<div  layout="column"  flex>
+								<div layout="row" flex="nogrow" ng-if="!arpDataset.length">
+									<h3 flex>Submit Dataset</h3>
+									<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;color: white;background-color: #2065ac" ng-click="downloadARPAPTemplate()">
+										Download Dataset Template
+									</md-button>
+								</div>
+								<div ng-if="!arpDataset.length" layout="row" style="margin-bottom: 20px;" flex="nogrow">
+									<div layout="row" layout-align="start center" flex="30">
+										<span>Environment</span>
+									</div>
+									<md-radio-group ng-model="arp.env" layout="row" style="font-size: 0.8em;" layout-align="start center" aria-labelledby="environment">
+										<md-radio-button value="Preprod" class="md-primary">Preprod</md-radio-button>
+										<md-radio-button value="Prod" class="md-primary">Prod</md-radio-button>
+									</md-radio-group>
+								</div>
+								<div ng-if="!arpDataset.length" layout="row" flex="nogrow">
+									<div layout="row" layout-align="start center" flex="30"><span>Dataset<sup style="color:red; font-weight: bold; font-size: 1em;"> *</sup></span></div>
+									<div layout="row" layout-align="start center" flex>
+										<input type="file" ngf-select="SelectARPFile($file)" ng-model="arp.file" flex/>
+									</div>
+									<md-icon style="color:#2065ac;">open_in_browser</md-icon>
+								</div>
+
+								<div ng-if="!arpDataset.length" layout="row" flex="nogrow">
+									<div layout="row" layout-align="start center"  flex="30" >Set Dataset Filename</div>
+									<md-input-container flex style="margin-bottom: 0px;">
+										<input ng-model="arp.filename" aria-label="expected filename"/>
+									</md-input-container>
+								</div>
+
+								<h3 ng-if="arpDataset.length">Dataset Editor</h3>
+								<div layout="column" flex ng-if="arpDataset.length">
+									<hot-table settings="settings"
+											   row-headers="true"
+											   min-spare-rows="minSpareRows"
+											   datarows="arpDataset"
+											   col-headers="arpHeaders"
+											   height="520" style="margin-top: 20px;">
+
+<!--										<hot-column data="ENVIRONMENT" title="'ENVIRONMENT'" type="grayedOut"></hot-column>-->
+<!--										<hot-column data="TRANSACTION_ID" title="'TRANSACTION ID'" type="grayedOut"></hot-column>-->
+<!--										<hot-column data="MSISDN_A" title="'MSISDN A'" type="grayedOut"></hot-column>-->
+<!--										<hot-column data="MSISDN_B" title="'MSISDN B (GIFT)'" type="grayedOut"></hot-column>-->
+<!--										<hot-column data="PRODUCT_ID" title="'PRODUCT ID'" type="grayedOut"></hot-column>-->
+<!--										<hot-column data="PURCHASE_MODE" title="'PURCHASE MODE'" type="grayedOut"></hot-column>-->
+<!--										<hot-column data="PURCHASE_TYPE" title="'PURCHASE TYPE'" type="grayedOut"></hot-column>-->
+<!--										<hot-column data="ORDER_TYPE" title="'ORDER TYPE'" type="grayedOut"></hot-column>-->
+									</hot-table>
+								</div>
+
+								<div layout="row" flex="nogrow">
+									<div ng-if="!arpDataset.length" layout="row" layout-align="start center">
+										<span style="color:red; font-weight: bold">*Required</span>
+									</div>
+									<div layout="row" layout-align="end end" flex>
+										<md-button class="md-raised" style="color:#2065ac; background-color: white; text-transform: none; font-size: 0.8em;" ng-click="resetInputARP()">Cancel</md-button>
+										<div flex="3"></div>
+										<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;" ng-disabled="!isARPFileSelected();" ng-if="!showPreviewARP"
+												   ng-style="isARPFileSelected() ? {'color': 'white', 'background-color': '#2065ac'} : {'background':'silver', 'color':'white'}" ng-click="UploadARPFile()">
+											Submit Dataset
+										</md-button>
+										<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;color: white;background-color: #2065ac" ng-if="showPreviewARP" ng-click="QuickCheckARP()">
+											Quick Check
+										</md-button>
+									</div>
+								</div>
+							</div>
+						</md-card>
+
+						<!-- Card Step 2 -->
+						<md-card layout="column" style="padding: 5px 30px 30px 30px;" ng-if="currentARPStep === 2">
+							<div layout="column">
+								<h4  flex>Quick Check</h4>
+								<span >Dataset has been cleaned!</span>
+							</div>
+
+							<div layout="row">
+								<md-card class="md-padding" md-whiteframe="4" layout="column" layout-margin="1" flex="20">
+									<div layout="row" layout-align="center center">
+										<span style="font-size: 1.8em; color: mediumseagreen">{{ rowInputARP.row }}</span>
+									</div>
+									<div layout="row" layout-align="center center">
+										Remaining Row
+									</div>
+								</md-card>
+								<md-card class="md-padding" md-whiteframe="4" layout="column" layout-margin="1" flex="20">
+									<div layout="row" layout-align="center center">
+										<span style="font-size: 1.8em; color: red;">{{ rowInputARP.duplicate }}</span>
+										<span>/</span>
+										<span>{{ rowInputARP.total }}</span>
+									</div>
+									<div layout="row" layout-align="center center">
+										Duplicate Row
+									</div>
+								</md-card>
+							</div>
+
+							<md-tabs class="tabs-blue md-no-ink-bar-color" flex>
+								<md-tab style="text-transform: none;" label="Remaining Row" flex>
+									<div layout="column" style="margin-top: 20px;">
+										<hot-table settings="settings"
+												   row-headers="true"
+												   min-spare-rows="minSpareRows"
+												   datarows="rowInputARP.data"
+												   col-headers="arpHeaders"
+												   height="320">
+
+<!--											<hot-column data="ENVIRONMENT" title="'ENVIRONMENT'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="TRANSACTION_ID" title="'TRANSACTION ID'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="MSISDN_A" title="'MSISDN A'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="MSISDN_B" title="'MSISDN B (GIFT)'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="PRODUCT_ID" title="'PRODUCT ID'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="PURCHASE_MODE" title="'PURCHASE MODE'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="PURCHASE_TYPE" title="'PURCHASE TYPE'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="ORDER_TYPE" title="'ORDER TYPE'" type="grayedOut"></hot-column>-->
+
+										</hot-table>
+									</div>
+								</md-tab>
+								<md-tab style="text-transform: none;" label="Duplicate Row" flex>
+									<div layout="column" style="margin-top: 20px;">
+										<hot-table settings="settings"
+												   row-headers="true"
+												   min-spare-rows="minSpareRows"
+												   datarows="rowInputARP.dataDuplicate"
+												   col-headers="arpHeaders"
+												   height="320">
+
+<!--											<hot-column data="ENVIRONMENT" title="'ENVIRONMENT'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="TRANSACTION_ID" title="'TRANSACTION ID'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="MSISDN_A" title="'MSISDN A'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="MSISDN_B" title="'MSISDN B (GIFT)'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="PRODUCT_ID" title="'PRODUCT ID'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="PURCHASE_MODE" title="'PURCHASE MODE'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="PURCHASE_TYPE" title="'PURCHASE TYPE'" type="grayedOut"></hot-column>-->
+<!--											<hot-column data="ORDER_TYPE" title="'ORDER TYPE'" type="grayedOut"></hot-column>-->
+
+										</hot-table>
+									</div>
+								</md-tab>
+							</md-tabs>
+
+							<div layout="row" flex="nogrow">
+								<div layout="row" layout-align="end end" flex>
+									<md-button class="md-raised" style="color:#2065ac; background-color: white; text-transform: none; font-size: 0.8em;" ng-click="resetInputARP()">Cancel</md-button>
+									<div flex="3"></div>
+									<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;color: white;background-color: #2065ac" ng-click="RunTestARP()">
+										Run Test
+									</md-button>
+								</div>
+							</div>
+						</md-card>
+
+						<md-card layout="column" style="padding: 5px 30px 30px 30px;" ng-if="currentARPStep === 3">
+
+						</md-card>
+
+						<md-card layout="column" style="padding: 5px 30px 30px 30px;" ng-if="currentARPStep === 4">
+							<div layout="row">
+								<h4 flex>Result</h4>
+								<md-button class="md-raised" style="text-transform: none; font-size: 0.8em; background-color: #2065ac; color: white;" ng-click="exportJsonToPdfARPAP()">
+									Export to PDF&nbsp;<md-icon md-svg-src="img/pdf-file.svg" style="color: white;" aria-label="file-pdf"></md-icon>
+								</md-button>
+								<md-button class="md-raised" style="text-transform: none; font-size: 0.8em; background-color: #2065ac; color: white;" ng-click="exportJsonToExcelARPAP()">
+									Export to Excel&nbsp;<md-icon md-svg-src="img/xlsx-file.svg" style="color: white;" aria-label="file-xlsx"></md-icon>
+								</md-button>
+								<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;color: white;background-color: #2065ac">Continue to Product FUT</md-button>
+							</div>
+							<div layout="column" style="padding: 5px; border-style: solid; border-width: thin; border-color: red;" flex id="printableARP">
+								<div layout="row">
+									<div layout="row" layout-margin="" flex="nogrow">
+										<div layout="row">
+											<img width="210px" src="img/telkomsel_new.png">
+										</div>
+										<div layout="column" layout-margin="" layout-align="center start">
+											<span style="font-size: 1.6em; font-weight: bold;">Digital Core</span>
+											<span style="font-size: 0.8em;">Product Automation Test Report</span>
+										</div>
+									</div>
+									<md-divider style="margin: 10px 10px; border-color: red;"></md-divider>
+									<div layout="column" style="color: #2065ac; font-size: 0.8em;" flex>
+										<md-card layout="row" style="padding: 5px 20px;" flex>
+											<div layout="row" layout-align="start center" flex>Tester</div>
+											<div layout="row" layout-align="end center" flex>{{ tester }}</div>
+										</md-card>
+										<md-card layout="row" style="padding: 5px 20px;" flex>
+											<div layout="row" layout-align="start center" flex>Dataset</div>
+											<div layout="row" layout-align="end center" flex>{{ arp.file.name }}</div>
+										</md-card>
+									</div>
+									<div layout="column" style="color: #2065ac; font-size: 0.8em;" flex>
+										<md-card layout="row" style="padding: 5px 20px;" flex>
+											<div layout="row" layout-align="start center" flex="nogrow">Date</div>
+											<div layout="row" layout-align="end center" flex>{{ currentDate }}</div>
+										</md-card>
+										<md-card layout="row" style="padding: 5px 20px;" flex>
+											<div layout="row" layout-align="start center" flex="nogrow">Time</div>
+											<div layout="row" layout-align="end center" flex>{{ currentTime }}</div>
+										</md-card>
+									</div>
+								</div>
+								<md-divider layout="row" style="margin: 10px 0px 0px 0px; background-color: red;"></md-divider>
+								<div layout="column" flex>
+									<md-table-container>
+										<table md-table>
+											<thead md-head md-order="filter.inputSortBy" md-on-reorder="">
+											<tr md-row>
+												<th md-column md-order-by="testId">TEST ID</th>
+												<th md-column md-order-by="bid">BID</th>
+												<th md-column md-order-by="reqTestData" style="width: 40%;">REQUEST AND TEST DATA</th>
+												<th md-column md-order-by="result" style="width: 40%;">RESULT</th>
+											</tr>
+											</thead>
+											<tbody md-body>
+											<tr md-row ng-repeat="orderValidation in result" ng-style="$even ? {'background-color': 'lavender'} : {'background-color': 'whitesmoke'}" ng-class-even="'even-row'">
+												<td md-cell style="vertical-align: baseline;">{{ orderValidation.transaction_id }}</td>
+												<td md-cell style="vertical-align: baseline;">{{ orderValidation.product_id }}</td>
+												<td md-cell style="vertical-align: baseline;">
+													<div layout="column" style="color: #2065ac; font-size: 0.8em;" flex>
+														<md-card layout="row" style="padding: 5px 20px;" flex ng-if="orderValidation.service_id_a">
+															<div layout="row" layout-align="start center" style="opacity: 70%;" flex>MSISDN A</div>
+															<div layout="row" layout-align="end center" flex>{{ orderValidation.service_id_a }}</div>
+														</md-card>
+														<md-card layout="row" style="padding: 5px 20px;" flex ng-if="orderValidation.service_id_b">
+															<div layout="row" layout-align="start center" style="opacity: 70%;" flex>MSISDN B</div>
+															<div layout="row" layout-align="end center" flex>{{ orderValidation.service_id_b }}</div>
+														</md-card>
+														<md-card layout="row" style="padding: 5px 20px;" flex ng-if="orderValidation.brand">
+															<div layout="row" layout-align="start center" style="opacity: 70%;" flex>BRAND</div>
+															<div layout="row" layout-align="end center" flex>{{ orderValidation.brand }}</div>
+														</md-card>
+														<md-card layout="row" style="padding: 5px 20px;" flex ng-if="orderValidation.balance">
+															<div layout="row" layout-align="start center" style="opacity: 70%;" flex>BALANCE</div>
+															<div layout="row" layout-align="end center" flex>{{ orderValidation.balance }}</div>
+														</md-card>
+														<md-card layout="row" style="padding: 5px 20px;" flex ng-if="orderValidation.channel">
+															<div layout="row" layout-align="start center" style="opacity: 70%;" flex>CHANNEL</div>
+															<div layout="row" layout-align="end center" flex>{{ orderValidation.channel }}</div>
+														</md-card>
+														<md-card layout="row" style="padding: 5px 20px;" flex ng-if="orderValidation.purchase_mode">
+															<div layout="row" layout-align="start center" style="opacity: 70%;" flex>PURCHASE MODE</div>
+															<div layout="row" layout-align="end center" flex>{{ orderValidation.purchase_mode }}</div>
+														</md-card>
+														<md-card layout="row" style="padding: 5px 20px;" flex ng-if="orderValidation.payment_method">
+															<div layout="row" layout-align="start center" style="opacity: 70%;" flex>PAYMENT METHOD</div>
+															<div layout="row" layout-align="end center" flex>{{ orderValidation.payment_method }}</div>
+														</md-card>
+														<md-card layout="row" style="padding: 5px 20px;" flex ng-if="orderValidation.kabupaten">
+															<div layout="row" layout-align="start center" style="opacity: 70%;" flex>KABUPATEN</div>
+															<div layout="row" layout-align="end center" flex>{{ orderValidation.kabupaten.replace('%20', ' ') }}</div>
+														</md-card>
+													</div>
+												</td>
+												<td md-cell style="vertical-align: baseline;">
+													<div layout="row" flex>
+														<div layout="column" style="color: #2065ac; font-size: 0.8em;" flex ng-if="orderValidation.status_code === 'RV-0000'">
+															<div layout="column">
+																<md-button style="color: white; background-color: limegreen;">ELIGIBLE</md-button>
+															</div>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>COMM NAME</div>
+																<div layout="row" layout-align="end center" style="white-space: pre-wrap; text-align: right;" flex>{{ orderValidation.product_commercial_name }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>PRICE</div>
+																<div layout="row" layout-align="end center" style="white-space: pre-wrap; text-align: right;" flex>{{ orderValidation.price }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>ORIGINAL PRICE</div>
+																<div layout="row" layout-align="end center" style="white-space: pre-wrap; text-align: right;" flex>{{ orderValidation.original_price }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>ACTIVE PERIOD</div>
+																<div layout="row" layout-align="end center" style="white-space: pre-wrap; text-align: right;" flex>{{ orderValidation.active_period }}</div>
+															</md-card>
+															<md-card layout="row" layout-align="space-between none" style="padding: 5px 20px;" flex="nogrow">
+																<span flex>ALLOWANCE</span> <span style="text-align: right;" flex>{{ transformAllowance(orderValidation.allowance) }}</span>
+															</md-card>
+															<md-card layout="row" layout-align="space-between none" style="padding: 5px 20px;" flex="nogrow">
+																<span flex>NOTIFICATION</span> <span style="text-align: right;" flex>{{ transformNotification(orderValidation) }}</span>
+															</md-card>
+														</div>
+														<div layout="column" style="color: #2065ac; font-size: 0.8em;" flex ng-if="orderValidation.status_code !== 'RV-0000'">
+															<div layout="column">
+																<md-button style="color: white; background-color: red;">NOT ELIGIBLE</md-button>
+															</div>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>REASON</div>
+																<div layout="row" layout-align="end center" style="white-space: pre-wrap; text-align: right;" flex>
+																	{{ orderValidation.status_code }} <br> {{ orderValidation.status_description }}
+																</div>
+															</md-card>
+															<md-card layout="row" layout-align="space-between none" style="padding: 5px 20px;" flex="nogrow" ng-if="orderValidation.notification">
+																<span flex>NOTIFICATION</span> <span style="text-align: right;" flex>{{ orderValidation.notification }}</span>
+															</md-card>
+														</div>
+													</div>
+												</td>
+											</tr>
+											</tbody>
+										</table>
+									</md-table-container>
+								</div>
+							</div>
+						</md-card>
+					</div>
+				</div>
+			</md-tab>
+			<!-- TAB 'ARP' end here -->
+
+		</md-tabs>
+	</div>
+</md-content>

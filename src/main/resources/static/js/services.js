@@ -1,5 +1,5 @@
 var site = "";
-var tttServices = angular.module('tttServices', [ 'ngResource' ]);
+var tripleTService = angular.module('tripleTService', [ 'ngResource' ]);
 
 function createResource($resource, url, method, isArray) {
     return $resource(wsurl + url, {}, {
@@ -11,7 +11,7 @@ function createResource($resource, url, method, isArray) {
     });
 }
 
-tttServices.factory("TicTacToe", [ "$resource", function ($resource) {
+tripleTService.factory("tripleT", [ "$resource", function ($resource) {
     return {
         start : function () {
             return createResource($resource, "/main/start", "POST", false);

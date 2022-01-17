@@ -1,0 +1,834 @@
+<md-content class="md-padding general-background" layout="column">
+	<div class="md-padding">
+		<h2 style="color: white;">Order Submission Single - Reseller</h2>
+
+		<md-tabs class="tabs-simple md-no-ink-bar-color" md-dynamic-height >
+			<md-tab style="text-transform: none;" label="Voucher Fisik" md-on-select="resetInput()">
+				<div layout="row" flex>
+					<div layout="column" flex>
+						<md-card layout="column" style="padding: 5px 30px 30px 30px;" flex="nogrow">
+							<div  layout="column" flex>
+								<h3>Request</h3>
+								<form layout="column" name="productCheck" flex>
+									<div layout="row" flex>
+										<div layout="column" flex>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="40"><span>Transaction ID<sup style="color:red; font-weight:bold;font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<input ng-model="input.transaction_id" style="margin-top: 8px" aria-label="transaction_id"/>
+												</md-input-container>
+											</div>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="40"><span>MSISDN A<sup style="color:red; font-weight:bold; font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<input name="msisdna" ng-pattern="regex.msisdn" ng-model="input.msisdn_a" style="margin-top: 8px;" aria-label="msisdn_a"/>
+													<div ng-messages="productCheck.msisdna.$error">
+														<div ng-message="pattern">Input not valid! Please input numeric.</div>
+													</div>
+												</md-input-container>
+											</div>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="40"><span>MSISDN B<sup style="color:red; font-weight:bold; font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<input name="msisdnb" ng-pattern="regex.msisdn" ng-model="input.msisdn_b" style="margin-top: 8px;" aria-label="msisdn_b"/>
+													<div ng-messages="productCheck.msisdnb.$error">
+														<div ng-message="pattern">Input not valid! Please input numeric.</div>
+													</div>
+												</md-input-container>
+											</div>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="40"><span>Product ID / Business ID<sup style="color:red; font-weight:bold; font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<input name="bid" ng-pattern="regex.bid" ng-model="input.bid" style="margin-top: 8px;" aria-label="bid"/>
+													<div ng-messages="productCheck.bid.$error">
+														<div ng-message="pattern">Input not valid! Please input numeric.</div>
+													</div>
+												</md-input-container>
+											</div>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="40"><span>Organization Code<sup style="color:red; font-weight:bold; font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<input name="orgCode" ng-pattern="regex.bid" ng-model="input.orgCode" style="margin-top: 8px;" aria-label="Organization Code"/>
+													<div ng-messages="productCheck.orgCode.$error">
+														<div ng-message="pattern">Input not valid! Please input numeric.</div>
+													</div>
+												</md-input-container>
+											</div>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="40"><span>Element 1</span></div>
+												<md-input-container flex>
+													<input name="element1" ng-model="input.element1" style="margin-top: 8px;" aria-label="element1"/>
+												</md-input-container>
+											</div>
+										</div>
+										<md-divider style="margin: 0px 25px;"></md-divider>
+										<div layout="column" flex>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="40"><span>Purchase Mode<sup style="color:red; font-weight:bold; font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<md-select aria-label="test" style="margin-top: 8px;" flex ng-model="input.purchaseMode" md-on-close="search.purchase_mode = ''" md-container-class="selectdemoSelectHeader">
+														<md-select-header class="demo-select-header">
+															<input ng-model="search.purchase_mode" aria-label="Purchase Mode filter" type="search" ng-keydown="$event.stopPropagation()"
+																   placeholder="Ex. RESELLER" class="demo-header-searchbox md-text">
+														</md-select-header>
+														<md-option ng-repeat="purchaseMode in purchaseModes | filter:search.purchase_mode track by purchaseMode" ng-value="purchaseMode" >
+															{{ purchaseMode }}
+														</md-option>
+													</md-select>
+												</md-input-container>
+											</div>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="40"><span>Payment Method<sup style="color:red; font-weight:bold; font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<md-select aria-label="test" style="margin-top: 8px" flex ng-model="input.paymentMethod" md-on-close="search.payment_method = ''" md-container-class="selectdemoSelectHeader">
+														<md-select-header class="demo-select-header">
+															<input ng-model="search.payment_method" aria-label="Payment Method filter" type="search" ng-keydown="$event.stopPropagation()"
+																   placeholder="Ex. RSEMONEY" class="demo-header-searchbox md-text">
+														</md-select-header>
+														<md-option ng-value="x" ng-repeat="x in paymentMethods | filter:search.payment_method track by x">
+															{{x}}
+														</md-option>
+													</md-select>
+												</md-input-container>
+											</div>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="40"><span>Order Type<sup style="color:red; font-weight:bold; font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<md-select placeholder="Order Type" name="orderType" ng-model="input.orderType" style="margin-top: 8px;" flex>
+														<md-option value="ACT">ACTIVATION</md-option>
+														<md-option value="DEACT">DEACTIVATION</md-option>
+													</md-select>
+												</md-input-container>
+											</div>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="40"><span>Channel<sup style="color:red; font-weight:bold; font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<md-select aria-label="test" style="margin-top: 8px" flex ng-model="input.channel" md-on-close="search.channel = ''" md-container-class="selectdemoSelectHeader">
+														<md-select-header class="demo-select-header">
+															<input ng-model="search.channel" aria-label="Channel filter" type="search" ng-keydown="$event.stopPropagation()"
+																   placeholder="Ex. DigiPos" class="demo-header-searchbox md-text">
+														</md-select-header>
+														<md-option ng-repeat="channel in channels | filter:search.channel track by channel.key" ng-value="channel.key" >
+															{{ channel.key }} - {{ channel.name }}
+														</md-option>
+													</md-select>
+												</md-input-container>
+											</div>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="40"><span>Serial Number</span></div>
+												<md-input-container flex>
+													<input name="serial_number" ng-model="input.serial_number" style="margin-top: 8px;" aria-label="serial_number"/>
+												</md-input-container>
+											</div>
+											<div flex></div>
+										</div>
+									</div>
+									<div layout="row">
+										<div layout="row" layout-align="start center">
+											<span style="color:red; font-weight: bold">*Required</span>
+										</div>
+										<div layout="row" layout-align="end end" flex>
+											<md-button class="md-raised" style="color:#2065ac; background-color: white; text-transform: none; font-size: 0.8em;" ng-click="clearForm(productCheck)">Clear</md-button>
+											<div flex="3"></div>
+											<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;" ng-disabled="mandatoryFieldEmpty('vf')"
+													   ng-style="productCheck.$valid && !mandatoryFieldEmpty('vf') ? {'color': 'white', 'background-color': '#2065ac'} : {'background':'silver', 'color':'white'}" ng-click="productChecking('vf')">
+												Submit
+											</md-button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</md-card>
+						<md-card layout="column" style="padding: 5px 30px 30px 30px;" flex ng-if="showReview">
+							<h3>Validation Result</h3>
+							<md-tabs class="tabs-blue md-no-ink-bar-color" md-selected="tracking.tabIndex" flex>
+								<md-tab ng-if="!isResultSuccessEmpty()">
+									<md-tab-label>Success</md-tab-label>
+									<md-tab-body>
+										<md-content>
+											<div layout="column" style="overflow-y: scroll; overflow-x: hidden; height: 500px;">
+												<md-card style="margin: 25px 1px 10px 1px;">
+													<div layout="row" style="padding: 15px;" flex>
+														<div layout="column" flex>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>Transaction ID</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>{{ input.transaction_id }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>MSISDN A</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>{{ input.msisdn_a }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>MSISDN B</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>{{ input.msisdn_b }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>Product ID / Business ID</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>{{ input.bid }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>Organization Code</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>{{ input.orgCode }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex ng-if="input.element1">
+																<div layout="row" layout-align="start center" flex>Element1</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>{{ input.element1 }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>Purchase Mode</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>{{ input.purchaseMode }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>Payment Method</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>{{ input.paymentMethod }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>Order Type</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>{{ input.orderType === 'ACT' ? 'Activation' : 'Deactivation' }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>Channel</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>{{ input.channel }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex ng-if="input.serial_number">
+																<div layout="row" layout-align="start center" flex>Serial Number</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>{{ input.serial_number }}</div>
+															</md-card>
+														</div>
+														<md-divider style="margin: 20px 25px;"></md-divider>
+														<div layout="column" flex>
+															<md-card layout="row" style="padding: 5px 20px;">
+																<div layout="row" layout-align="start center" flex>Success Message</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>
+																	{{ resultSuccess.transaction.status_code }}&nbsp;{{ resultSuccess.transaction.status_desc }}
+																</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;">
+																<div layout="row" layout-align="start " flex="25">Notification</div>
+																<div layout="row" style="color: #172b4d; font-weight: 600; text-align: right;" flex>
+																	{{ resultSuccess.notification }}
+																</div>
+															</md-card>
+														</div>
+													</div>
+												</md-card>
+											</div>
+										</md-content>
+									</md-tab-body>
+								</md-tab>
+								<md-tab ng-if="!isResultFailedEmpty()">
+									<md-tab-label>Failed</md-tab-label>
+									<md-tab-body>
+										<md-content>
+											<div layout="column" style="overflow-y: scroll; overflow-x: hidden; height: 500px;">
+												<md-card style="margin: 25px 1px 10px 1px;">
+													<div layout="row" style="padding: 15px;" flex>
+														<div layout="column" flex>
+															<md-card layout="row" style="padding: 5px 20px;">
+																<div layout="row" layout-align="start center" flex>Status Code</div>
+																<div layout="row" layout-align="end center" style="color: red; font-weight: 600;" flex>{{ resultFailed.transaction.status_code }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;">
+																<div layout="row" layout-align="start center" flex>Description</div>
+																<div layout="row" layout-align="end center" style="color: red; font-weight: 600;" flex>{{ resultFailed.transaction.status_desc }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;">
+																<div layout="row" layout-align="start " flex>Notification</div>
+																<div layout="row" layout-align="end center" style="color: red; font-weight: 600; text-align: right;" flex>{{ resultFailed.notification }}</div>
+															</md-card>
+														</div>
+													</div>
+												</md-card>
+											</div>
+										</md-content>
+									</md-tab-body>
+								</md-tab>
+								<md-tab>
+									<md-tab-label>Raw Response</md-tab-label>
+									<md-tab-body>
+										<md-content>
+											<md-card layout="column" flex>
+												<div layout="column" style="overflow-y: scroll; overflow-x: auto; height: 500px;" layout-padding="5">
+													<pre>{{ result | json }}</pre>
+												</div>
+											</md-card>
+										</md-content>
+									</md-tab-body>
+								</md-tab>
+								<md-tab>
+									<md-tab-label>Report</md-tab-label>
+									<md-tab-body>
+										<md-content>
+											<md-card layout="column" flex>
+												<div layout="column" layout-padding="5" flex>
+													<div layout="row">
+														<h4 flex>Result</h4>
+														<md-button class="md-raised" style="text-transform: none; font-size: 0.8em; background-color: #2065ac; color: white;" ng-click="exportJsonToPdf('vf')">
+															Export to PDF&nbsp;<md-icon md-svg-src="img/pdf-file.svg" style="color: white;" aria-label="file-pdf"></md-icon>
+														</md-button>
+														<md-button class="md-raised" style="text-transform: none; font-size: 0.8em; background-color: #2065ac; color: white;" ng-click="exportJsonToExcel('vf')">
+															Export to Excel&nbsp;<md-icon md-svg-src="img/xlsx-file.svg" style="color: white;" aria-label="file-xlsx"></md-icon>
+														</md-button>
+														<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;color: white;background-color: #2065ac">Continue to Product FUT</md-button>
+													</div>
+													<div layout="column" style="padding: 5px; border-style: solid; border-width: thin; border-color: red;" flex id="printableVF">
+														<div layout="row">
+															<div layout="row" layout-margin="" flex="nogrow">
+																<div layout="row">
+																	<img width="210px" src="img/telkomsel_new.png">
+																</div>
+																<div layout="column" layout-margin="" layout-align="center start">
+																	<span style="font-size: 1.6em; font-weight: bold;">Digital Core</span>
+																	<span style="font-size: 0.8em;">Product Automation Test Report</span>
+																</div>
+															</div>
+															<md-divider style="margin: 10px 10px; border-color: red;"></md-divider>
+															<div layout="column" style="color: #2065ac; font-size: 0.8em;" flex>
+																<md-card layout="row" style="padding: 0px 20px;" flex>
+																	<div layout="row" layout-align="start center" flex>Tester</div>
+																	<div layout="row" layout-align="end center" flex>{{ tester }}</div>
+																</md-card>
+																<div style="padding: 5px 20px;" flex></div>
+															</div>
+															<div layout="column" style="color: #2065ac; font-size: 0.8em;" flex>
+																<md-card layout="row" style="padding: 5px 20px;" flex>
+																	<div layout="row" layout-align="start center" flex>Date</div>
+																	<div layout="row" layout-align="end center" flex>{{ currentDate }}</div>
+																</md-card>
+																<md-card layout="row" style="padding: 5px 20px;" flex>
+																	<div layout="row" layout-align="start center" flex="nogrow">Time</div>
+																	<div layout="row" layout-align="end center" flex>{{ currentTime }}</div>
+																</md-card>
+															</div>
+														</div>
+														<md-divider layout="row" style="margin: 10px 0px 0px 0px; background-color: red;"></md-divider>
+														<div layout="column" flex>
+															<md-table-container>
+																<table md-table>
+																	<thead md-head md-order="filter.inputSortBy" md-on-reorder="">
+																	<tr md-row>
+																		<th md-column md-order-by="testId">TEST ID</th>
+																		<th md-column md-order-by="bid">BID</th>
+																		<th md-column md-order-by="reqTestData" style="width: 40%;">REQUEST AND TEST DATA</th>
+																		<th md-column md-order-by="result" style="width: 40%;">RESULT</th>
+																	</tr>
+																	</thead>
+																	<tbody md-body>
+																	<tr md-row ng-style="$even ? {'background-color': 'lavender'} : {'background-color': 'whitesmoke'}">
+																		<td md-cell style="vertical-align: baseline;">{{ input.transaction_id }}</td>
+																		<td md-cell style="vertical-align: baseline;">{{ input.bid }}</td>
+																		<td md-cell style="vertical-align: baseline;">
+																			<div layout="column" style="color: #2065ac; font-size: 0.8em;" flex>
+																				<md-card layout="row" style="padding: 5px 20px;" flex>
+																					<div layout="row" layout-align="start center" style="opacity: 70%;" flex>MSISDN A</div>
+																					<div layout="row" layout-align="end center" flex>{{ input.msisdn_a }}</div>
+																				</md-card>
+																				<md-card layout="row" style="padding: 5px 20px;" flex>
+																					<div layout="row" layout-align="start center" style="opacity: 70%;" flex>MSISDN B</div>
+																					<div layout="row" layout-align="end center" flex>{{ input.msisdn_b }}</div>
+																				</md-card>
+																				<md-card layout="row" style="padding: 5px 20px;" flex>
+																					<div layout="row" layout-align="start center" style="opacity: 70%;" flex>ORGANIZATION CODE</div>
+																					<div layout="row" layout-align="end center" flex>{{ input.orgCode }}</div>
+																				</md-card>
+																				<md-card layout="row" style="padding: 5px 20px;" flex ng-if="input.element1">
+																					<div layout="row" layout-align="start center" style="opacity: 70%;" flex>ELEMENT1</div>
+																					<div layout="row" layout-align="end center" flex>{{ input.element1 }}</div>
+																				</md-card>
+																				<md-card layout="row" style="padding: 5px 20px;" flex>
+																					<div layout="row" layout-align="start center" style="opacity: 70%;" flex>PURCHASE MODE</div>
+																					<div layout="row" layout-align="end center" flex>{{ input.purchaseMode }}</div>
+																				</md-card>
+																				<md-card layout="row" style="padding: 5px 20px;" flex>
+																					<div layout="row" layout-align="start center" style="opacity: 70%;" flex>PAYMENT METHOD</div>
+																					<div layout="row" layout-align="end center" flex>{{ input.paymentMethod }}</div>
+																				</md-card>
+																				<md-card layout="row" style="padding: 5px 20px;" flex>
+																					<div layout="row" layout-align="start center" style="opacity: 70%;" flex>ORDER TYPE</div>
+																					<div layout="row" layout-align="end center" flex>{{ input.orderType === 'ACT' ? 'Activation' : 'Deactivation' }}</div>
+																				</md-card>
+																				<md-card layout="row" style="padding: 5px 20px;" flex>
+																					<div layout="row" layout-align="start center" style="opacity: 70%;" flex>Channel</div>
+																					<div layout="row" layout-align="end center" flex>{{ input.channel }}</div>
+																				</md-card>
+																				<md-card layout="row" style="padding: 5px 20px;" flex ng-if="input.serial_number">
+																					<div layout="row" layout-align="start center" style="opacity: 70%;" flex>Serial Number</div>
+																					<div layout="row" layout-align="end center" flex>{{ input.serial_number }}</div>
+																				</md-card>
+																			</div>
+																		</td>
+																		<td md-cell style="vertical-align: baseline;">
+																			<div layout="row" flex>
+																				<div layout="column" style="color: #2065ac; font-size: 0.8em;" flex ng-if="result.transaction.status_code === '00000'">
+																					<div layout="column">
+																						<md-button style="color: white; background-color: limegreen;">ELIGIBLE</md-button>
+																					</div>
+																					<md-card layout="row" style="padding: 5px 20px;">
+																						<div layout="row" layout-align="start " flex="25">Success Message</div>
+																						<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600; text-align: right;" flex>
+																							{{ result.transaction.status_code }}<br>{{ result.transaction.status_desc }}
+																						</div>
+																					</md-card>
+																					<md-card layout="row" style="padding: 5px 20px;">
+																						<div layout="row" layout-align="start " flex="25">Notification</div>
+																						<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>
+																							{{ result.notification }}
+																						</div>
+																					</md-card>
+																				</div>
+																				<div layout="column" style="color: #2065ac; font-size: 0.8em;" flex ng-if="result.transaction.status_code !== '00000'">
+																					<div layout="column">
+																						<md-button style="color: white; background-color: red;">NOT ELIGIBLE</md-button>
+																					</div>
+																					<md-card layout="row" style="padding: 5px 20px;" flex>
+																						<div layout="row" layout-align="start center" flex>REASON</div>
+																						<div layout="row" layout-align="end center" style="white-space: pre-wrap; text-align: right;" flex>
+																							{{ result.transaction.status_code }} <br> {{ result.transaction.status_desc }}
+																						</div>
+																					</md-card>
+																					<md-card layout="row" layout-align="space-between none" style="padding: 5px 20px;" flex="nogrow" ng-if="result.notification">
+																						<span flex>NOTIFICATION</span> <span style="text-align: right;" flex>{{ result.notification }}</span>
+																					</md-card>
+																				</div>
+																			</div>
+																		</td>
+																	</tr>
+																	</tbody>
+																</table>
+															</md-table-container>
+														</div>
+													</div>
+												</div>
+											</md-card>
+										</md-content>
+									</md-tab-body>
+								</md-tab>
+							</md-tabs>
+						</md-card>
+					</div>
+				</div>
+			</md-tab>
+
+			<md-tab style="text-transform: none;" label="ARP & AP" md-on-select="resetInput()">
+				<div layout="row" flex>
+					<div layout="column" flex>
+						<md-card layout="column" style="padding: 5px 30px 30px 30px;" flex="nogrow">
+							<div  layout="column" flex>
+								<h3>Request</h3>
+								<form layout="column" name="productCheckARPAP" flex>
+									<div layout="row" flex>
+										<div layout="column" flex>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="40"><span>Transaction ID<sup style="color:red; font-weight:bold;font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<input ng-model="input.transaction_id" style="margin-top: 8px" aria-label="transaction_id"/>
+												</md-input-container>
+											</div>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="40"><span>MSISDN A<sup style="color:red; font-weight:bold; font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<input name="msisdna" ng-pattern="regex.msisdn" ng-model="input.msisdn_a" style="margin-top: 8px;" aria-label="msisdn_a"/>
+													<div ng-messages="productCheckARPAP.msisdna.$error">
+														<div ng-message="pattern">Input not valid! Please input numeric.</div>
+													</div>
+												</md-input-container>
+											</div>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="40"><span>MSISDN B<sup style="color:red; font-weight:bold; font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<input name="msisdnb" ng-pattern="regex.msisdn" ng-model="input.msisdn_b" style="margin-top: 8px;" aria-label="msisdn_b"/>
+													<div ng-messages="productCheckARPAP.msisdnb.$error">
+														<div ng-message="pattern">Input not valid! Please input numeric.</div>
+													</div>
+												</md-input-container>
+											</div>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="40"><span>Product ID / Business ID<sup style="color:red; font-weight:bold; font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<input name="bid" ng-pattern="regex.bid" ng-model="input.bid" style="margin-top: 8px;" aria-label="bid"/>
+													<div ng-messages="productCheckARPAP.bid.$error">
+														<div ng-message="pattern">Input not valid! Please input numeric.</div>
+													</div>
+												</md-input-container>
+											</div>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="40"><span>Organization Code<sup style="color:red; font-weight:bold; font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<input name="orgCode" ng-pattern="regex.bid" ng-model="input.orgCode" style="margin-top: 8px;" aria-label="Organization Code"/>
+													<div ng-messages="productCheckARPAP.orgCode.$error">
+														<div ng-message="pattern">Input not valid! Please input numeric.</div>
+													</div>
+												</md-input-container>
+											</div>
+
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="40"><span>Channel<sup style="color:red; font-weight:bold; font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<md-select aria-label="test" style="margin-top: 8px;" flex ng-model="input.channel" md-on-close="search.channel = ''" md-container-class="selectdemoSelectHeader">
+														<md-select-header class="demo-select-header">
+															<input ng-model="search.channel" aria-label="Channel filter" type="search" ng-keydown="$event.stopPropagation()"
+																   placeholder="Ex. DigiPos" class="demo-header-searchbox md-text">
+														</md-select-header>
+														<md-option ng-repeat="channel in channels | filter:search.channel track by channel.key" ng-value="channel.key" >
+															{{ channel.key }} - {{ channel.name }}
+														</md-option>
+													</md-select>
+												</md-input-container>
+											</div>
+										</div>
+										<md-divider style="margin: 0px 25px;"></md-divider>
+										<div layout="column" flex>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="40">Recharge Flag</div>
+												<div layout="row" layout-align="start center" style="font-size: 0.8em;">
+													<md-radio-group ng-model="input.rechargeFlag" layout="row" layout-align="start center" aria-labelledby="rechargeFlag">
+														<md-radio-button value="1" class="md-primary">ARP</md-radio-button>
+														<md-radio-button value="0" class="md-primary">AP</md-radio-button>
+													</md-radio-group>
+												</div>
+											</div>
+
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="40"><span>Purchase Mode<sup style="color:red; font-weight:bold; font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<md-select aria-label="test" style="margin-top: 8px;" flex ng-model="input.purchaseMode" md-on-close="search.purchase_mode" md-container-class="selectdemoSelectHeader">
+														<md-select-header class="demo-select-header">
+															<input ng-model="search.purchase_mode" aria-label="Purchase Mode filter" type="search" ng-keydown="$event.stopPropagation()"
+																   placeholder="Ex. RESELLER" class="demo-header-searchbox md-text">
+														</md-select-header>
+														<md-option ng-repeat="purchaseMode in purchaseModes | filter:search.purchase_mode track by purchaseMode" ng-value="purchaseMode" >
+															{{ purchaseMode }}
+														</md-option>
+													</md-select>
+												</md-input-container>
+											</div>
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="40"><span>Payment Method<sup style="color:red; font-weight:bold; font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<md-select aria-label="test" style="margin-top: 8px" flex ng-model="input.paymentMethod" md-on-close="search.payment_method = ''" md-container-class="selectdemoSelectHeader">
+														<md-select-header class="demo-select-header">
+															<input ng-model="search.payment_method" aria-label="Payment Method filter" type="search" ng-keydown="$event.stopPropagation()"
+																   placeholder="Ex. RSEMONEY" class="demo-header-searchbox md-text">
+														</md-select-header>
+														<md-option ng-value="x" ng-repeat="x in paymentMethods | filter:search.payment_method track by x">
+															{{x}}
+														</md-option>
+													</md-select>
+												</md-input-container>
+											</div>
+
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="40"><span>Order Type<sup style="color:red; font-weight:bold; font-size:1em;"> * </sup></span></div>
+												<md-input-container flex>
+													<md-select placeholder="Order Type" name="orderType" ng-model="input.orderType" style="margin-top: 8px;" flex>
+														<md-option value="ACT">ACTIVATION</md-option>
+														<md-option value="DEACT">DEACTIVATION</md-option>
+													</md-select>
+												</md-input-container>
+											</div>
+
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="40"><span>Element 1</span></div>
+												<md-input-container flex>
+													<input name="element1" ng-model="input.element1" style="margin-top: 8px;" aria-label="element1"/>
+												</md-input-container>
+											</div>
+
+											<div layout="row" flex>
+												<div layout="row" layout-align="start center" flex="40"><span>Amount</span></div>
+												<md-input-container flex>
+													<input name="amount" ng-model="input.amount" style="margin-top: 8px;" aria-label="amount"/>
+												</md-input-container>
+											</div>
+										</div>
+									</div>
+									<div layout="row">
+										<div layout="row" layout-align="start center">
+											<span style="color:red; font-weight: bold">*Required</span>
+<!--											<span style="color:red; font-weight: bold">*Location value must be Uppercase</span>-->
+										</div>
+										<div layout="row" layout-align="end end" flex>
+											<md-button class="md-raised" style="color:#2065ac; background-color: white; text-transform: none; font-size: 0.8em;" ng-click="clearForm(productCheckARPAP)">Clear</md-button>
+											<div flex="3"></div>
+											<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;" ng-disabled="mandatoryFieldEmpty('arpap')"
+													   ng-style="productCheckARPAP.$valid && !mandatoryFieldEmpty('arpap') ? {'color': 'white', 'background-color': '#2065ac'} : {'background':'silver', 'color':'white'}" ng-click="productChecking('arpap')">
+												Submit
+											</md-button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</md-card>
+						<md-card layout="column" style="padding: 5px 30px 30px 30px;" flex ng-if="showReview">
+							<h3>Validation Result</h3>
+							<md-tabs class="tabs-blue md-no-ink-bar-color" md-selected="tracking.tabIndex" flex>
+								<md-tab ng-if="!isResultSuccessEmpty()">
+									<md-tab-label>Success</md-tab-label>
+									<md-tab-body>
+										<md-content>
+											<div layout="column" style="overflow-y: scroll; overflow-x: hidden; height: 500px;">
+												<md-card style="margin: 25px 1px 10px 1px;">
+													<div layout="row" style="padding: 15px;" flex>
+														<div layout="column" flex>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>Transaction ID</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>{{ input.transaction_id }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>MSISDN A</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>{{ input.msisdn_a }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>MSISDN B</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>{{ input.msisdn_b }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>Product ID / Business ID</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>{{ input.bid }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>Organization Code</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>{{ input.orgCode }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex ng-if="input.element1">
+																<div layout="row" layout-align="start center" flex>Element1</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>{{ input.element1 }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>Purchase Mode</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>{{ input.purchaseMode }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>Payment Method</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>{{ input.paymentMethod }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>Order Type</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>{{ input.orderType === 'ACT' ? 'Activation' : 'Deactivation' }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex>
+																<div layout="row" layout-align="start center" flex>Channel</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>{{ input.channel }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;" flex ng-if="input.amount">
+																<div layout="row" layout-align="start center" flex>Amount</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>{{ input.amount }}</div>
+															</md-card>
+														</div>
+														<md-divider style="margin: 20px 25px;"></md-divider>
+														<div layout="column" flex>
+															<md-card layout="row" style="padding: 5px 20px;">
+																<div layout="row" layout-align="start center" flex>Success Message</div>
+																<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>
+																	{{ resultSuccess.transaction.status_code }}&nbsp;{{ resultSuccess.transaction.status_desc }}
+																</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;">
+																<div layout="row" layout-align="start " flex="25">Notification</div>
+																<div layout="row" style="color: #172b4d; font-weight: 600; text-align: right;" flex>
+																	{{ resultSuccess.notification }}
+																</div>
+															</md-card>
+														</div>
+													</div>
+												</md-card>
+											</div>
+										</md-content>
+									</md-tab-body>
+								</md-tab>
+								<md-tab ng-if="!isResultFailedEmpty()">
+									<md-tab-label>Failed</md-tab-label>
+									<md-tab-body>
+										<md-content>
+											<div layout="column" style="overflow-y: scroll; overflow-x: hidden; height: 500px;">
+												<md-card style="margin: 25px 1px 10px 1px;">
+													<div layout="row" style="padding: 15px;" flex>
+														<div layout="column" flex>
+															<md-card layout="row" style="padding: 5px 20px;">
+																<div layout="row" layout-align="start center" flex>Status Code</div>
+																<div layout="row" layout-align="end center" style="color: red; font-weight: 600;" flex>{{ resultFailed.transaction.status_code }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;">
+																<div layout="row" layout-align="start center" flex>Description</div>
+																<div layout="row" layout-align="end center" style="color: red; font-weight: 600;" flex>{{ resultFailed.transaction.status_desc }}</div>
+															</md-card>
+															<md-card layout="row" style="padding: 5px 20px;">
+																<div layout="row" layout-align="start " flex>Notification</div>
+																<div layout="row" layout-align="end center" style="color: red; font-weight: 600; text-align: right;" flex>{{ resultFailed.notification }}</div>
+															</md-card>
+														</div>
+													</div>
+												</md-card>
+											</div>
+										</md-content>
+									</md-tab-body>
+								</md-tab>
+								<md-tab>
+									<md-tab-label>Raw Response</md-tab-label>
+									<md-tab-body>
+										<md-content>
+											<md-card layout="column" flex>
+												<div layout="column" style="overflow-y: scroll; overflow-x: auto; height: 500px;" layout-padding="5">
+													<pre>{{ result | json }}</pre>
+												</div>
+											</md-card>
+										</md-content>
+									</md-tab-body>
+								</md-tab>
+								<md-tab>
+									<md-tab-label>Report</md-tab-label>
+									<md-tab-body>
+										<md-content>
+											<md-card layout="column" flex>
+												<div layout="column" layout-padding="5" flex>
+													<div layout="row">
+														<h4 flex>Result</h4>
+														<md-button class="md-raised" style="text-transform: none; font-size: 0.8em; background-color: #2065ac; color: white;" ng-click="exportJsonToPdf('arpap')">
+															Export to PDF&nbsp;<md-icon md-svg-src="img/pdf-file.svg" style="color: white;" aria-label="file-pdf"></md-icon>
+														</md-button>
+														<md-button class="md-raised" style="text-transform: none; font-size: 0.8em; background-color: #2065ac; color: white;" ng-click="exportJsonToExcel('arpap')">
+															Export to Excel&nbsp;<md-icon md-svg-src="img/xlsx-file.svg" style="color: white;" aria-label="file-xlsx"></md-icon>
+														</md-button>
+														<md-button class="md-raised" style="text-transform: none; font-size: 0.8em;color: white;background-color: #2065ac">Continue to Product FUT</md-button>
+													</div>
+													<div layout="column" style="padding: 5px; border-style: solid; border-width: thin; border-color: red;" flex id="printableARPAP">
+														<div layout="row">
+															<div layout="row" layout-margin="" flex="nogrow">
+																<div layout="row">
+																	<img width="210px" src="img/telkomsel_new.png">
+																</div>
+																<div layout="column" layout-margin="" layout-align="center start">
+																	<span style="font-size: 1.6em; font-weight: bold;">Digital Core</span>
+																	<span style="font-size: 0.8em;">Product Automation Test Report</span>
+																</div>
+															</div>
+															<md-divider style="margin: 10px 10px; border-color: red;"></md-divider>
+															<div layout="column" style="color: #2065ac; font-size: 0.8em;" flex>
+																<md-card layout="row" style="padding: 0px 20px;" flex>
+																	<div layout="row" layout-align="start center" flex>Tester</div>
+																	<div layout="row" layout-align="end center" flex>{{ tester }}</div>
+																</md-card>
+																<div style="padding: 5px 20px;" flex></div>
+															</div>
+															<div layout="column" style="color: #2065ac; font-size: 0.8em;" flex>
+																<md-card layout="row" style="padding: 5px 20px;" flex>
+																	<div layout="row" layout-align="start center" flex>Date</div>
+																	<div layout="row" layout-align="end center" flex>{{ currentDate }}</div>
+																</md-card>
+																<md-card layout="row" style="padding: 5px 20px;" flex>
+																	<div layout="row" layout-align="start center" flex="nogrow">Time</div>
+																	<div layout="row" layout-align="end center" flex>{{ currentTime }}</div>
+																</md-card>
+															</div>
+														</div>
+														<md-divider layout="row" style="margin: 10px 0px 0px 0px; background-color: red;"></md-divider>
+														<div layout="column" flex>
+															<md-table-container>
+																<table md-table>
+																	<thead md-head md-order="filter.inputSortBy" md-on-reorder="">
+																	<tr md-row>
+																		<th md-column md-order-by="testId">TEST ID</th>
+																		<th md-column md-order-by="bid">BID</th>
+																		<th md-column md-order-by="reqTestData" style="width: 40%;">REQUEST AND TEST DATA</th>
+																		<th md-column md-order-by="result" style="width: 40%;">RESULT</th>
+																	</tr>
+																	</thead>
+																	<tbody md-body>
+																	<tr md-row ng-style="$even ? {'background-color': 'lavender'} : {'background-color': 'whitesmoke'}">
+																		<td md-cell style="vertical-align: baseline;">{{ input.transaction_id }}</td>
+																		<td md-cell style="vertical-align: baseline;">{{ input.bid }}</td>
+																		<td md-cell style="vertical-align: baseline;">
+																			<div layout="column" style="color: #2065ac; font-size: 0.8em;" flex>
+																				<md-card layout="row" style="padding: 5px 20px;" flex>
+																					<div layout="row" layout-align="start center" style="opacity: 70%;" flex>MSISDN A</div>
+																					<div layout="row" layout-align="end center" flex>{{ input.msisdn_a }}</div>
+																				</md-card>
+																				<md-card layout="row" style="padding: 5px 20px;" flex>
+																					<div layout="row" layout-align="start center" style="opacity: 70%;" flex>MSISDN B</div>
+																					<div layout="row" layout-align="end center" flex>{{ input.msisdn_b }}</div>
+																				</md-card>
+																				<md-card layout="row" style="padding: 5px 20px;" flex>
+																					<div layout="row" layout-align="start center" style="opacity: 70%;" flex>ORGANIZATION CODE</div>
+																					<div layout="row" layout-align="end center" flex>{{ input.orgCode }}</div>
+																				</md-card>
+																				<md-card layout="row" style="padding: 5px 20px;" flex ng-if="input.element1">
+																					<div layout="row" layout-align="start center" style="opacity: 70%;" flex>ELEMENT1</div>
+																					<div layout="row" layout-align="end center" flex>{{ input.element1 }}</div>
+																				</md-card>
+																				<md-card layout="row" style="padding: 5px 20px;" flex>
+																					<div layout="row" layout-align="start center" style="opacity: 70%;" flex>PURCHASE MODE</div>
+																					<div layout="row" layout-align="end center" flex>{{ input.purchaseMode }}</div>
+																				</md-card>
+																				<md-card layout="row" style="padding: 5px 20px;" flex>
+																					<div layout="row" layout-align="start center" style="opacity: 70%;" flex>PAYMENT METHOD</div>
+																					<div layout="row" layout-align="end center" flex>{{ input.paymentMethod }}</div>
+																				</md-card>
+																				<md-card layout="row" style="padding: 5px 20px;" flex>
+																					<div layout="row" layout-align="start center" style="opacity: 70%;" flex>ORDER TYPE</div>
+																					<div layout="row" layout-align="end center" flex>{{ input.orderType === 'ACT' ? 'Activation' : 'Deactivation' }}</div>
+																				</md-card>
+																				<md-card layout="row" style="padding: 5px 20px;" flex>
+																					<div layout="row" layout-align="start center" style="opacity: 70%;" flex>Channel</div>
+																					<div layout="row" layout-align="end center" flex>{{ input.channel }}</div>
+																				</md-card>
+																				<md-card layout="row" style="padding: 5px 20px;" flex ng-if="input.amount">
+																					<div layout="row" layout-align="start center" style="opacity: 70%;" flex>Amount</div>
+																					<div layout="row" layout-align="end center" flex>{{ input.amount }}</div>
+																				</md-card>
+																			</div>
+																		</td>
+																		<td md-cell style="vertical-align: baseline;">
+																			<div layout="row" flex>
+																				<div layout="column" style="color: #2065ac; font-size: 0.8em;" flex ng-if="result.transaction.status_code === '00000'">
+																					<div layout="column">
+																						<md-button style="color: white; background-color: limegreen;">ELIGIBLE</md-button>
+																					</div>
+																					<md-card layout="row" style="padding: 5px 20px;">
+																						<div layout="row" layout-align="start " flex="25">Success Message</div>
+																						<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600; text-align: right;" flex>
+																							{{ result.transaction.status_code }}<br>{{ result.transaction.status_desc }}
+																						</div>
+																					</md-card>
+																					<md-card layout="row" style="padding: 5px 20px;">
+																						<div layout="row" layout-align="start " flex="25">Notification</div>
+																						<div layout="row" layout-align="end center" style="color: #172b4d; font-weight: 600;" flex>
+																							{{ result.notification }}
+																						</div>
+																					</md-card>
+																				</div>
+																				<div layout="column" style="color: #2065ac; font-size: 0.8em;" flex ng-if="result.transaction.status_code !== '00000'">
+																					<div layout="column">
+																						<md-button style="color: white; background-color: red;">NOT ELIGIBLE</md-button>
+																					</div>
+																					<md-card layout="row" style="padding: 5px 20px;" flex>
+																						<div layout="row" layout-align="start center" flex>REASON</div>
+																						<div layout="row" layout-align="end center" style="white-space: pre-wrap; text-align: right;" flex>
+																							{{ result.transaction.status_code }} <br> {{ result.transaction.status_desc }}
+																						</div>
+																					</md-card>
+																					<md-card layout="row" layout-align="space-between none" style="padding: 5px 20px;" flex="nogrow" ng-if="result.notification">
+																						<span flex>NOTIFICATION</span> <span style="text-align: right;" flex>{{ result.notification }}</span>
+																					</md-card>
+																				</div>
+																			</div>
+																		</td>
+																	</tr>
+																	</tbody>
+																</table>
+															</md-table-container>
+														</div>
+													</div>
+												</div>
+											</md-card>
+										</md-content>
+									</md-tab-body>
+								</md-tab>
+							</md-tabs>
+						</md-card>
+					</div>
+				</div>
+			</md-tab>
+
+		</md-tabs>
+	</div>
+</md-content>

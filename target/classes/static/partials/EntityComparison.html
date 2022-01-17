@@ -1,0 +1,245 @@
+<md-content class="md-padding" layout="column">
+	<div class="md-padding" ng-if="subtitle == 'Basic'">
+		<h2>Entity Comparison - Latest & Live</h2>
+		
+		<md-card-content>
+			<md-card class="right-shadow" style="margin-bottom: 20px">
+				<div layout="row" style="margin-top:15px" flex>
+					<h5>Configurations</h5>
+				</div>
+	          	
+	          	<div layout="row" layout-wrap flex>
+	            	<div flex="100">
+	              		<md-checkbox>Download XML</md-checkbox>
+	              		<md-checkbox ng-model="check.compareByCollection" ng-click="clear()">Compare By Collections</md-checkbox>
+	            	</div>
+	          	</div>
+	        </md-card>
+			
+			<md-card class="right-shadow" style="margin-bottom: 20px" layout="column">
+				<div layout="row" style="margin-top:15px" flex>
+					<h5>Filter</h5>
+				</div>
+				
+				<div>					
+					<md-input-container class="md-block" style="margin-bottom: 32px">
+						<label>Template Name</label> 
+						<md-select ng-model="filter.templateName" ng-change="checkFindEntityButton()" >
+							<md-option ng-repeat="x in templates" value="{{x}}">
+						    		{{x}}
+						    </md-option>
+					 	</md-select>
+					</md-input-container>
+				</div>
+				
+				<md-input-container class="md-block" style="margin-bottom:0" ng-if="check.compareByCollection">
+					<textarea ng-model="filter.bidOrNameCollections" rows="8" name="bidOrNameCollections" ng-change="checkRunButton()" placeholder="Please input 'BID' or 'Entity Names', for separator you can use 'comma' or 'new line'"></textarea>
+				</md-input-container>
+				
+				<div layout="row" style="margin-bottom:15px" ng-if="!check.compareByCollection">
+					<div flex></div>
+					<md-button style="width:200px; margin-right: 30px" md-colors="!ui.disableFindEntityButton ? {'background':'green'} : {}" class="md-raised md-primary" ng-click="findEntity()"
+						ng-disabled="ui.disableFindEntityButton">Search</md-button>
+				</div>
+			</md-card>
+		</md-card-content>
+		
+		<md-card class="right-shadow" ng-if="!check.compareByCollection">
+			<div layout="row" style="margin-top:20px" flex>
+				<h5>Search Entities</h5>
+			</div>
+			
+			<md-input-container class="md-block" style="margin-bottom:0" ng-if="true">
+				<label>Search </label> 
+				<md-icon class="material-icons">search</md-icon>
+				<input ng-model="search.search" ng-keydown="$event.keyCode == 13 && findEntity()"
+					ng-disabled="!filter.templateName"/>
+			</md-input-container>
+			
+			<md-table-container>
+				<table md-table class="nobordertop headborderbottom"
+					md-row-select multiple ng-model="search.selected">
+					<thead md-head md-order="search.order">
+						<tr md-row>
+							<th md-column md-order-by="name">Name</th>
+							<th md-column md-order-by="businessID">BID</th>
+							<th md-column md-order-by="guidLive">GUID Live Version</th>
+							<th md-column md-order-by="guidLatest">GUID Latest Version</th>
+							<th md-column md-order-by="publicID">Latest Workflow Status</th>
+						</tr>
+					</thead>
+					<tbody md-body>
+						<tr ng-hide="(search.data | filter:search.search).length">
+							<td colspan="5" md-row style="padding:24px;text-align:center">
+								No Data Available.
+							</td>
+						</tr>
+						<tr md-row ng-repeat="x in search.data | orderBy: search.order | filter: search.search | limitTo: search.limit : (search.page - 1) * search.limit"
+							class="selectable" md-select="x" md-select-id="$index" md-on-select="checkRunButton" md-on-deselect="checkRunButton" md-auto-select>
+							<td md-cell>{{x[0].name}}</td>
+							<td md-cell>{{x[0].businessID}}</td>
+							<td md-cell>{{x[0].publicID}}</td>
+							<td md-cell>{{x[1].publicID}}</td>
+							<td md-cell>{{x[1].workflowStatus}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</md-table-container>
+			<md-table-pagination md-limit="search.limit" md-page="search.page"
+				md-limit-options="[5,10,50]"
+				md-total="{{(search.data | filter:search.search).length}}" md-page-select>
+			</md-table-pagination>
+		</md-card>
+		
+		<md-card class="right-shadow" ng-if="!check.compareByCollection">
+			<div layout="row" style="margin-top:20px" flex>
+				<h5>Selected Entities</h5>
+			</div>
+			<md-table-container>
+				<table md-table class="nobordertop headborderbottom" md-row-select multiple ng-model="search.selected">
+					<thead md-head>
+						<tr md-row>
+							<th md-column md-order-by="name">Name</th>
+							<th md-column md-order-by="businessID">BID</th>
+							<th md-column md-order-by="guidLive">GUID Live Version</th>
+							<th md-column md-order-by="guidLatest">GUID Latest Version</th>
+							<th md-column md-order-by="publicID">Latest Workflow Status</th>
+						</tr>
+					</thead>
+					<tbody md-body>
+						<tr ng-hide="search.selected.length">
+							<td colspan="5" md-row style="padding:24px;text-align:center">
+								No Data Available.
+							</td>
+						</tr>
+						<tr md-row ng-repeat="x in search.selected | orderBy: 'name' | limitTo: search.selected.length : (searchx.page - 1) * search.selected.length"	
+							class="selectable" md-select="x" md-select-id="$index" md-on-select="checkRunButton" md-on-deselect="checkRunButton" md-auto-select>
+							<td md-cell>{{x[0].name}}</td>
+							<td md-cell>{{x[0].businessID}}</td>
+							<td md-cell>{{x[0].publicID}}</td>
+							<td md-cell>{{x[1].publicID}}</td>
+							<td md-cell>{{x[1].workflowStatus}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</md-table-container>
+			<md-table-pagination md-limit="search.selected.length" md-page="searchx.page" md-total="{{search.selected.length}}" md-page-select>
+			</md-table-pagination>
+		</md-card>
+		
+		<div layout="row">
+			<md-button style="width:200px" class="md-raised md-warn" ng-click="clear()">Clear</md-button>
+			<div flex></div>
+			<md-button style="width:200px" md-colors="!ui.disableRunButton ? {'background':'green'} : {}" class="md-raised md-primary" ng-click="run()"
+				ng-disabled="ui.disableRunButton">Run</md-button>
+		</div>
+	</div>
+
+	<div class="md-padding" ng-if="subtitle == 'Advanced'">
+		<h2>Entity Comparison - N & N-1</h2>
+		
+		<md-card-content>			
+			<md-card class="right-shadow" style="margin-bottom: 20px" layout="column">
+				<div layout="row" style="margin-top:20px" flex>
+					<h5>Search Entities</h5>
+				</div>
+				
+				<md-input-container class="md-block" style="margin-bottom: 32px">
+					<label>Template Name</label> 
+					<md-select ng-model="filter.templateNameAdvanced" ng-change="checkFindEntityButton()" >
+						<md-option ng-repeat="x in templates" value="{{x}}">
+							{{x}}
+						</md-option>
+					</md-select>
+				</md-input-container>
+				
+				<div layout="row" style="margin-bottom:15px">
+					<md-input-container class="md-block" style="margin-bottom:0" ng-if="true" flex>
+						<label>Entity Name or BID </label> 
+						<md-icon class="material-icons">search</md-icon>
+						<input ng-model="searchx.search" ng-keydown="$event.keyCode == 13 && findEntityAdvanced()"
+							ng-disabled="!filter.templateNameAdvanced"/>
+					</md-input-container>
+					<md-button style="width:200px; height:20px;" md-colors="!uix.disableFindEntityButton ? {'background':'green'} : {}"
+						class="md-raised md-primary" ng-click="findEntityAdvanced()"
+						ng-disabled="uix.disableFindEntityButton">Search</md-button>
+				</div>
+			</md-card>
+		</md-card-content>
+
+		<md-card class="right-shadow">
+			<md-table-container>
+				<table md-table class="nobordertop headborderbottom"
+					md-row-select ng-model="searchx.selected">
+					<thead md-head md-order="searchx.order">
+						<tr md-row>
+							<th md-column md-order-by="name">Name</th>
+							<th md-column md-order-by="businessID">BID</th>
+							<th md-column md-order-by="guidLive">GUID Live Version</th>
+							<th md-column md-order-by="publicID">Max Version</th>
+						</tr>
+					</thead>
+					<tbody md-body>
+						<tr ng-hide="searchx.data.length">
+							<td colspan="5" md-row style="padding:24px;text-align:center">
+								No Data Available.
+							</td>
+						</tr>
+						<tr md-row ng-repeat="x in searchx.data"
+							class="selectable" md-select="x" md-select-id="$index" md-on-select="checkRunButton; initListVersion;" md-on-deselect="checkRunButton" md-auto-select>
+							<td md-cell>{{x.name}}</td>
+							<td md-cell>{{x.businessID}}</td>
+							<td md-cell>{{x.publicID}}</td>
+							<td md-cell>{{x.versionNumber}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</md-table-container>
+			<md-table-pagination md-limit="dataTable.pageSize" md-page="dataTable.pageNumber"
+				md-limit-options="[5,10,50]" md-on-paginate="findEntityAdvanced"
+				md-total="{{dataTable.totalElements}}" md-page-select>
+			</md-table-pagination>
+		</md-card>
+		
+		<md-card class="right-shadow" style="margin-top: 20px" ng-if="searchx.selected.length != 0">
+			<div layout="row" style="margin-top:20px" flex>
+				<h5>Selected Entities</h5>
+			</div>
+			
+			<div layout="row">
+				<md-input-container style="margin-bottom:0" flex>
+					<label>Entity Name</label><input disabled ng-model="searchx.selected[0].name"/>
+				</md-input-container>
+				<md-input-container class="md-block" style="margin-right: 30px" ng-if="true" flex>
+					<label>Version 1</label> 
+						<md-select ng-model="filter.versionAtas" ng-change="checkVersion()">
+							<md-option ng-repeat="x in listVersion" value="{{x}}">
+						    		{{x}}
+						    </md-option>
+					 </md-select>
+				</md-input-container>
+			</div>
+			<div layout="row">
+				<md-input-container style="margin-bottom:0" flex>
+					<label>BID</label><input disabled ng-model="searchx.selected[0].businessID"/>
+				</md-input-container>
+				<md-input-container class="md-block" style="margin-right: 30px" ng-if="true" flex>
+					<label>Version 2</label> 
+						<md-select ng-model="filter.versionBawah" ng-change="checkVersion()">
+							<md-option ng-repeat="x in listVersion" value="{{x}}">
+						    		{{x}}
+						    </md-option>
+					 </md-select>
+				</md-input-container>
+			</div>
+		</md-card>
+		
+		<div layout="row">
+			<md-button style="width:200px" class="md-raised md-warn" ng-click="clear()">Clear</md-button>
+			<div flex></div>
+			<md-button style="width:200px" md-colors="!(!filter.versionAtas || !filter.versionBawah) ? {'background':'green'} : {}" class="md-raised md-primary" ng-click="run()"
+				ng-disabled="!filter.versionAtas || !filter.versionBawah">Run</md-button>
+		</div>
+	</div>
+
+</md-content>

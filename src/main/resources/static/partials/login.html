@@ -1,0 +1,60 @@
+<md-content class="md-padding" layout="row" layout-align="center center" layout-fill flex style="background-color:#fff">
+	<div layout="column" flex="40">
+		<div layout="row" layout-align="center center" style="margin-bottom:35px">
+			 <div style="font-size: 60px; color: rgba(112,112,112,1)">
+				<span>Telkomsel EPC Tools</span>
+			</div>
+		</div> 
+		
+		<div layout="row" layout-align="center center" 
+			style="font-size: 30px; color: rgba(112,112,112,1);
+				margin-bottom: 35px">
+			Welcome, Please Login
+		</div>
+	
+		<md-card> 
+			<md-card-content layout="column">
+				<form name="loginForm">
+					<div layout="column">
+						<md-input-container class="md-block" style="margin-bottom:0">
+							<label>Username </label> 
+							<md-icon class="material-icons">person</md-icon>
+							<input type="text" name="username"
+								ng-model="login.username" required my-enter="login()"/>
+							<div ng-messages="loginForm.username.$error">
+								<div ng-message="required">This is required.</div>
+							</div>
+						</md-input-container>
+
+						<md-input-container class="md-block" style="margin-bottom:0">
+							<label>Password</label> 
+							<md-icon class="material-icons">lock</md-icon>
+							<input type="{{ passwordType }}" name="password" ng-model="login.password" required
+								my-enter="login()">
+							<md-icon class="material-icons" ng-click="changeVisibility()" style="cursor: pointer">
+								{{ visibility ? 'visibility' : 'visibility_off' }}</md-icon>
+							<div ng-messages="loginForm.password.$error">
+								<div ng-message="required">This is required.</div>
+							</div>
+						</md-input-container>
+						
+						<md-input-container class="md-block"> 
+							<label>Catalog Instance</label> 
+							<md-icon class="material-icons">view_agenda</md-icon>
+							<md-select ng-model="login.instanceId">
+				          		<md-option ng-repeat="x in instances" value="{{x.instanceId}}">
+				                		{{x.instanceName}}
+				              	</md-option>
+				            </md-select>
+						</md-input-container>
+						
+						<div flex layout="row" style="margin-top:16px">
+							<md-button flex class="md-raised md-primary" ng-click="login()"
+								ng-disabled="loginForm.$invalid">Log In</md-button>
+						</div>
+					</div>
+				</form>
+			</md-card-content>
+		</md-card>
+	</div>
+</md-content>

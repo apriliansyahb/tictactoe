@@ -1,0 +1,65 @@
+<md-content class="md-padding" layout="column">
+	<div class="md-padding">
+		<h2>Upload References</h2>
+		
+		<div layout="row" style="margin-top:15px" flex>
+			<h5>Filter</h5>
+		</div>
+		<md-card class="right-shadow" ng-if="true">
+			<md-input-container class="md-block" style="margin-bottom:0" ng-if="true">
+				<label>Search </label> 
+				<md-icon class="material-icons">search</md-icon>
+				<input/>
+			</md-input-container>
+		</md-card>
+		
+		<md-card class="right-shadow" ng-if="true">
+			<md-table-container>
+				<table md-table class="nobordertop headborderbottom"
+					md-row-select multiple ng-model="">
+					<thead md-head md-order="" md-on-reorder="">
+						<tr md-row>
+							<th md-column md-order-by="username">Username</th>
+							<th md-column md-order-by="activity">Activity</th>
+							<th md-column md-order-by="initTime">Initiate Time</th>
+							<th md-column md-order-by="status">Status</th>
+							<th md-column md-order-by="progress">Progress</th>
+							<th md-column md-order-by="file">File</th>
+							<th md-column md-order-by="action">Action</th>
+						</tr>
+					</thead>
+					<tbody md-body>
+						<tr ng-hide="dummy.length">
+							<td colspan="6" md-row style="padding:24px;text-align:center">
+								No Data Available.
+							</td>
+						</tr>
+						<tr md-row ng-repeat="x in dummy "
+							class="selectable" md-select="x" md-select-id="id" md-on-select="checkDownloadButton" md-on-deselect="checkDownloadButton" md-auto-select>
+							<td md-cell>{{x.username}}</td>
+							<td md-cell>{{x.activity}}</td>
+							<td md-cell>{{x.initTime}}</td>
+							<td md-cell>{{x.status}}</td>
+							<td md-cell>{{x.progress}}</td>
+							<td md-cell>{{x.file}}</td>
+							<td md-cell>Action</td>
+						</tr>
+					</tbody>
+				</table>
+			</md-table-container>
+			<md-table-pagination md-limit="dataTable.limit" md-page="dataTable.pageable.pageNumber"
+				md-limit-options="[5,10,50]" md-on-paginate="findUserLoginLog"
+				md-total="{{dataTable.totalElements}}" md-page-select>
+			</md-table-pagination>
+		</md-card>
+		
+		<!-- <div layout="row">
+			<md-button style="width:200px" class="md-raised md-warn" ng-click="clear()">Clear</md-button>
+			<div flex></div>
+			<md-button style="width:200px" md-colors="!ui.disableDownloadButton ? {'background':'green'} : {}" class="md-raised md-primary" ng-click="downloadUserLoginLog()"
+				ng-disabled="ui.disableDownloadButton">Download</md-button>
+			<md-button style="width:200px" md-colors="{'background':'green'}" class="md-raised md-primary" ng-click="findUserLoginLog()"
+				ng-disabled="false">Find</md-button>
+		</div> -->
+	</div>
+</md-content>

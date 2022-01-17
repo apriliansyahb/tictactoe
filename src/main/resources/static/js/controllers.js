@@ -1,17 +1,16 @@
-var tttControllers = angular.module('tttControllers', []);
+var tripleTController = angular.module('tripleTController', []);
 
 function goToBoard() {
     window.location = "#!/board";
 }
 
-haControllers.controller('BoardCtrl', [
+tripleTController.controller('BoardCtrl', [
     '$scope',
     '$mdDialog',
-    'TicTacToe',
+    'tripleT',
     '$interval',
     function ($scope, $mdDialog, service, $interval) {
-        // checkLogin(false);
-//        $scope.$emit("load", "board");
+        $scope.$emit("load", "board");
 
         $scope.boardSize = 3;
         
